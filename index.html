@@ -1,9 +1,53 @@
 <!DOCTYPE html>
 <html>
-    <head lang="en">
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="https://d3js.org/topojson.v3.min.js"></script>
 
-        <title>Info5100 Project3</title>
-        </head>
+<head lang="en">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <style>
+        .polygon {
+            fill: #daedf4;
+        }
+
+        .outline {
+            stroke: black;
+            stroke-width: 2px;
+            fill: none;
+        }
+    </style>
+    <title>Info5100 Project3</title>
+</head>
+
+<body>
+    <svg id="map" width="1800" height="1350" style="background: gray"></svg>
+    <script>
+        const svg = d3.select("svg#map");
+
+        const width = svg.attr("width");
+        const height = svg.attr("height");
+        const margin = { top: 10, right: 10, bottom: 20, left: 20 };
+        const mapWidth = width - margin.left - margin.right;
+        const mapHeight = height - margin.top - margin.bottom;
+        const map = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        const requestData = async function () {
+            const us = await d3.json("States of US.json");
+            console.log(us)
+
+            const mapProjection = d3
+                .geoMercator()
+                .fitSize([mapWidth, mapHeight], us);
+            const path = d3.geoPath().projection(mapProjection);
+            let wholeMap = map
+                .selectAll("path.polygon")
+                .data(us.features)
+                .join("path")
+                .attr("class", "polygon")
+                .attr("d", path)
+        }
+        requestData()
+    </script>
+</body>
+
 </html>
