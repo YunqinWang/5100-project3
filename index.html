@@ -5,21 +5,27 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
     <style>
-        .polygon {
-            fill: #daedf4;
+        .state {
+            fill: lightgrey;
         }
 
         .outline {
             stroke: black;
-            stroke-width: 2px;
+            stroke-width: 1px;
             fill: none;
+        }
+
+        .graticule {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1px;
         }
     </style>
     <title>Info5100 Project3</title>
 </head>
 
 <body>
-    <svg id="map" width="1800" height="1350" style="background: gray"></svg>
+    <svg id="map" width="900" height="850" style="background: gray"></svg>
     <script>
         const svg = d3.select("svg#map");
 
@@ -32,19 +38,26 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         const requestData = async function () {
-            const us = await d3.json("States of US.json");
+            const us = await d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json');
             console.log(us)
+            var states = topojson.feature(us, us.objects.states);
+            var statesMesh = topojson.mesh(us, us.objects.states);
+            console.log(statesMesh)
+            var projection = d3.geoAlbersUsa().fitSize([mapWidth, mapHeight], states);
+            var path = d3.geoPath().projection(projection);
 
-            const mapProjection = d3
-                .geoMercator()
-                .fitSize([mapWidth, mapHeight], us);
-            const path = d3.geoPath().projection(mapProjection);
-            let wholeMap = map
-                .selectAll("path.polygon")
-                .data(us.features)
+            let graticule = d3.geoGraticule10();
+            map.append("path").attr("class", "graticule").attr("d", path(graticule))
+
+            map.selectAll("path.state").data(states.features)
                 .join("path")
-                .attr("class", "polygon")
+                .attr("class", "state")
+                .attr('id', (d) => d.properties.name)
                 .attr("d", path)
+
+            map.append("path").datum(statesMesh)
+                .attr("class", "outline")
+                .attr("d", path);
         }
         requestData()
     </script>
