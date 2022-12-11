@@ -5,6 +5,8 @@ const sectorGridMargin = {top: 70, right: 10, bottom: 10, left: 50};
 const sectorChartWidth = sectorGridWidth - sectorGridMargin.left - sectorGridMargin.right;
 const sectorChartHeight = sectorGridHeight - sectorGridMargin.top - sectorGridMargin.bottom;
 const sectorAxisOffset = 10;
+const changeSqaureSize = 5.5;
+const changeSqaureRound = 2;
 
 const sectorGridAnnotations = sectorGrid.append("g").attr("id","sectorGridAnnotations")
 const sectorBackCol = sectorGrid.append("g").attr("id","sectorBackCol")
@@ -12,9 +14,9 @@ const sectorBackCol = sectorGrid.append("g").attr("id","sectorBackCol")
 const sectorChartArea = sectorGrid.append("g").attr("id","sectorChart")
                                 .attr("transform",`translate(${sectorGridMargin.left},${sectorGridMargin.top})`);
                                 
-sectorChartArea.append("rect").attr("x",-12).attr("y",0)
-                .attr("width",sectorChartWidth+12)
-                .attr("height",sectorChartHeight+12)
+sectorChartArea.append("rect").attr("x",-changeSqaureSize*2).attr("y",0)
+                .attr("width",sectorChartWidth+changeSqaureSize*2)
+                .attr("height",sectorChartHeight+changeSqaureSize*2)
                 .attr("fill","#000")
                 .attr("opacity",0.03);
 
@@ -76,7 +78,6 @@ const getSectorData = async ()=>{
         })
     }
 
-    console.log(sectorChangeData)
     const yearExtent = d3.extent(sectorChangeData, d=>d.date)
     const yearScale = d3.scaleTime().domain(yearExtent).range([0,sectorChartWidth]);
 
@@ -115,13 +116,13 @@ const getSectorData = async ()=>{
     sectorGridAnnotations.append("text")
                         .text("Change rate of number of jobs")
                         .attr("font-size","15px")
-                        .attr("x", 1360)
+                        .attr("x", 1200)
                         .attr("y",15)
                         .attr("text-anchor", "end")
  
     sectorColors.forEach((d,i)=>{
         sectorGridAnnotations.append("rect")
-                            .attr("x", 1400+i*50)
+                            .attr("x", 1250+i*50)
                             .attr("y",0)
                             .attr("width",15)
                             .attr("height",15)
@@ -134,14 +135,13 @@ const getSectorData = async ()=>{
                                 return ("> "+sectorColorLegend[sectorColorLegend.length-1])
                             else return (sectorColorLegend[i-1]+"-"+sectorColorLegend[i])
                             })
-                            .attr("x",1400+i*50)
+                            .attr("x",1250+i*50)
                             .attr("y",30)
                             .attr("text-anchor", "middle")
                                             
     })
 
-    const changeSqaureSize = 6;
-    const changeSqaureRound = 2;
+    
     //back column
     sectorBackCol.selectAll("rect.changeCol").data(allYear)
                 .join("rect")
