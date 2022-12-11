@@ -14,10 +14,13 @@
         .sector-axis .domain{
             stroke: none;
         }
+        .changeCol{
+            z-index: -1;
+        }
     </style>
     <body>
         <h1>Project3</h1>
-        <h6>Team member:Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462), Jiaxin Li(jl3579), Peter Huang (mh2289)</h6>
+        <h6>Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462), Jiaxin Li(jl3579), Peter Huang (mh2289)</h6>
         <h4>Job Gains and Losses of each Sector</h4>
         <svg id="sectorGrid" width="1700" height="400"></svg>
         <script>
@@ -30,13 +33,16 @@
             const sectorAxisOffset = 10;
 
             const sectorGridAnnotations = sectorGrid.append("g").attr("id","sectorGridAnnotations")
-            let sectorChartArea = sectorGrid.append("g").attr("id","sectorChart")
+            const sectorBackCol = sectorGrid.append("g").attr("id","sectorBackCol")
+                                            .attr("transform",`translate(${sectorGridMargin.left},${sectorGridMargin.top})`);
+            const sectorChartArea = sectorGrid.append("g").attr("id","sectorChart")
                                             .attr("transform",`translate(${sectorGridMargin.left},${sectorGridMargin.top})`);
 
 
             const getSectorData = async ()=>{
                 const sectorData = await d3.csv("./sector_employment_data.csv");
-
+                
+                let allYear = []
                 let sectorChangeData = [];
                 for(let i=1; i<sectorData.length; i++){
 
@@ -46,6 +52,8 @@
                     let monthName = d["Month"].slice(dashPos+1);
                     let date = new Date(Date.parse(monthName  +" 1, "+year ));
 
+                    allYear.push(date)
+              
                     let dPrev = sectorData[i-1]
                     let sectorChange = []
                     
@@ -117,18 +125,65 @@
                                             .domain(allChange)
                                             .range(["#5c74eb","#49c2ff",
                                             "#e3da3d","#ffaf4d","#ff6f56","#df3b82"])
-         
+
+                const changeSqaureSize = 6;
+                const changeSqaureRound = 2;
+                //back column
+                sectorBackCol.selectAll("rect.changeCol").data(allYear)
+                            .join("rect")
+                            .attr('class',"changeCol")
+                            .attr("fill", "#eaeaea")
+                            .attr("x", d => yearScale(d))
+                            .attr("y", 0)
+                            .attr("width", changeSqaureSize)
+                            .attr("height", sectorChartHeight)
+                            .attr("rx",changeSqaureRound)
+                            .attr("transform",`translate(${-changeSqaureSize},0)`)
+                            .attr("opacity",0)
+                            .on("mouseover", hoverSectorCol)
+                            .on("mouseout", leaveSectorCol) 
 
                 sectorChartArea.selectAll("rect.changeSquare").data(sectorChangeData)
                             .join("rect")
-                            .attr('class',`changeSquare`)
+                            .attr('class',"changeSquare")
                             .attr("fill", d=>sectorColorScale(d["change"]))
                             .attr("x", d => yearScale(d["date"]))
                             .attr("y", d => rankScale(d["rank"]))
-                            .attr("width", 6)
-                            .attr("height", 6)   
-                            .attr("transform","translate(-6,-6)")     
+                            .attr("width", changeSqaureSize)
+                            .attr("height", changeSqaureSize)
+                            .attr("rx",changeSqaureRound)
+                            .attr("transform",`translate(${-changeSqaureSize},${-changeSqaureSize})`)
+                            .on("mouseover", hoverSectorSqu)  
+                            .on("mouseout", leaveSectorSqu)  
 
+            
+                function hoverSectorCol(event,d){
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("opacity", 1)
+                }
+                function leaveSectorCol(event,d){
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("opacity", 0)
+                }
+                
+                function hoverSectorSqu(event,d){
+                    const backCol = d3.selectAll("rect.changeCol")
+                    .join("rect")
+                    .attr("opacity",d=>
+                        yearScale(d) == d3.select(this).attr("x") ?
+                        1:0
+                    )
+                }
+
+                function leaveSectorSqu(event,d){
+                    const backCol = d3.selectAll("rect.changeCol")
+                                    .join("rect")
+                                    .attr("opacity",0)
+                }
             }
             getSectorData();
 
