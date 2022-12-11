@@ -5,5 +5,133 @@
         <script src="https://d3js.org/topojson.v3.min.js"></script>
 
         <title>Info5100 Project3</title>
-        </head>
+    </head>
+    <style>
+        body{
+            width:90%;
+            margin:auto;
+        }
+        .sector-axis .domain{
+            stroke: none;
+        }
+    </style>
+    <body>
+        <h1>Project3</h1>
+        <h6>Team member:Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462), Jiaxin Li(jl3579), Peter Huang (mh2289)</h6>
+        <h4>Job Gains and Losses of each Sector</h4>
+        <svg id="sectorGrid" width="1700" height="400"></svg>
+        <script>
+            const sectorGrid = d3.select("#sectorGrid");
+            const sectorGridWidth = sectorGrid.attr("width");
+            const sectorGridHeight = sectorGrid.attr("height");
+            const sectorGridMargin = {top: 50, right: 10, bottom: 10, left: 50};
+            const sectorChartWidth = sectorGridWidth - sectorGridMargin.left - sectorGridMargin.right;
+            const sectorChartHeight = sectorGridHeight - sectorGridMargin.top - sectorGridMargin.bottom;
+            const sectorAxisOffset = 10;
+
+            const sectorGridAnnotations = sectorGrid.append("g").attr("id","sectorGridAnnotations")
+            let sectorChartArea = sectorGrid.append("g").attr("id","sectorChart")
+                                            .attr("transform",`translate(${sectorGridMargin.left},${sectorGridMargin.top})`);
+
+
+            const getSectorData = async ()=>{
+                const sectorData = await d3.csv("./sector_employment_data.csv");
+
+                let sectorChangeData = [];
+                for(let i=1; i<sectorData.length; i++){
+
+                    let d = sectorData[i];
+                    let dashPos = d["Month"].indexOf("-");
+                    let year = Number(d["Month"].slice(0, dashPos))+2000;
+                    let monthName = d["Month"].slice(dashPos+1);
+                    let date = new Date(Date.parse(monthName  +" 1, "+year ));
+
+                    let dPrev = sectorData[i-1]
+                    let sectorChange = {}
+                    sectorChange["sector"]=[]
+                    
+                    for(let[key,value] of Object.entries(d)){
+                        
+                        if(key.includes("Total")) continue;
+                        if(key != "Month"){
+                            value = (Number(d[key].replace(",",""))-Number(dPrev[key].replace(",","")))
+                                    /Number(d[key].replace(",",""));
+                            sectorChange["sector"].push({["name"] :key, ["change"]: value.toFixed(4)*1000});  
+                        }
+                    }
+
+                    //sort the change rate
+                    sectorChange["sector"].sort(function(a,b){
+                        return a.change -b.change ;
+                    })
+                    
+                    //find the item closest to zero
+                    let firstAboveZero=-1;
+                    sectorChange["sector"].forEach((item,index)=>{
+                        if(firstAboveZero== -1 && item.change>=0){
+                            firstAboveZero = index;
+                        }
+                        
+                    })
+                    sectorChange["sector"].forEach((d,i)=>{
+                        sectorChangeData.push({"date":date,"sector": d.name, "change":d.change, "rank":i-firstAboveZero})
+                    })
+                }
+                console.log(sectorChangeData)
+                const yearExtent = d3.extent(sectorChangeData, d=>d.date)
+                const yearScale = d3.scaleTime().domain(yearExtent).range([0,sectorChartWidth]);
+                
+                const topYearAxis = d3.axisTop(yearScale)
+                sectorGridAnnotations.append("g")
+                                    .attr("class", "year sector-axis")
+                                    .attr("transform",`translate(${sectorGridMargin.left-sectorAxisOffset},${sectorGridMargin.top})`)
+                                    .call(topYearAxis)
+
+                // let changeExtent = d3.extent(sectorChangeData, d=> {
+                //     for (let[key,value] of Object.entries(d)){
+                //         if(key != "date") return value;
+                //     }
+                // })
+                
+                // changeExtent[0] = Math.floor(changeExtent[0])
+                // changeExtent[1] = Math.ceil(changeExtent[1])
+                // console.log(changeExtent)
+                // const changeScale = d3.scaleLinear().domain(changeExtent).range([sectorChartHeight,0]);
+                // const leftChangeAxis = d3.axisLeft(changeScale).tickFormat(d => d )
+                // sectorGridAnnotations.append("g")
+                //                     .attr("class", "change sector-axis")
+                //                     .attr("transform",`translate(${sectorGridMargin.left-sectorAxisOffset},${sectorGridMargin.top})`)
+                //                     .call(leftChangeAxis)
+                
+                const rankExtent = [-20,20]
+                const rankScale = d3.scaleLinear().domain(rankExtent).range([sectorChartHeight,0]);
+                const leftChangeAxis = d3.axisLeft(rankScale)
+                sectorGridAnnotations.append("g")
+                                    .attr("class", "rank sector-axis")
+                                    .attr("transform",`translate(${sectorGridMargin.left-sectorAxisOffset},${sectorGridMargin.top})`)
+                                    .call(leftChangeAxis)
+
+
+                     
+                sectorChartArea.selectAll("rect.changeSquare").data(sectorChangeData)
+                            .join("rect")
+                            .attr('class',`changeSquare`)
+                            .attr("fill", "black")
+                            .attr("x", d => yearScale(d["date"]))
+                            .attr("y", d => rankScale(d["rank"])
+                                
+                                
+                            )
+
+                            .attr("width", 5)
+                            .attr("height", 5)
+                
+                
+                                
+
+            }
+            getSectorData();
+
+        </script>
+    </body>
 </html>
