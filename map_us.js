@@ -1,4 +1,5 @@
-const svg = d3.select("svg#map").style("position", "relative");;
+const svg = d3.select("svg#map");
+const map_legend = d3.select("#map_legend");
 const width = svg.attr("width");
 const height = svg.attr("height");
 const margin = { top: 10, right: 10, bottom: 50, left: 50 };
@@ -64,6 +65,8 @@ const drawMap = async function () {
     .attr("class", "outline")
     .attr("d", path);
 
+  // Draw a legend below map
+  draw_legend(map_legend, colorScale);
   // Recolor the states to make a map
   map.selectAll(".state")
     .style("fill", d => colorScale(unemployment_rate_2022[d.id]));
@@ -192,5 +195,65 @@ const drawMap = async function () {
     // We're hiding the mouseover mesh we added as extra content here.
     momesh.attr('d', '');
   }
+
+  // Define a function to draw a legend
+  function draw_legend(legend, legendColorScale) {
+
+    const legend_width = legend.attr('width');
+    const legend_MinMax = d3.extent(legendColorScale.domain());
+    const bar_height = 45;
+    const step_size = 4;
+
+    const pixel_scale = d3
+      .scaleLinear()
+      .domain([0, legend_width - 35])
+      .range([legend_MinMax[0] - 1, legend_MinMax[1] + 1]);
+
+    const bar_scale = d3
+      .scaleLinear()
+      .domain([legend_MinMax[0] - 1, legend_MinMax[1] + 1])
+      .range([0, legend_width - 35]);
+    const bar_axis = d3.axisBottom(bar_scale);
+
+    if (legendColorScale.hasOwnProperty('quantiles')) {
+      bar_axis.tickValues(legendColorScale.quantiles().concat(legend_MinMax));
+    }
+    legend
+      .append('g')
+      .attr('class', 'colorbar axis')
+      .attr('transform', 'translate(' + 20 + ',' + (bar_height + 5) + ')')
+      .call(bar_axis);
+
+    let bar = legend
+      .append('g')
+      .attr('transform', 'translate(' + 20 + ',' + 0 + ')');
+    for (let i = 0; i < legend_width - 35; i = i + step_size) {
+      bar
+        .append('rect')
+        .attr('x', i)
+        .attr('y', 0)
+        .attr('width', step_size)
+        .attr('height', bar_height)
+        .style('fill', legendColorScale(pixel_scale(i)));
+    }
+
+    bar
+      .append('line')
+      .attr('stroke', 'white')
+      .attr('stroke-width', 2)
+      .attr('x1', bar_scale(legend_MinMax[0]))
+      .attr('x2', bar_scale(legend_MinMax[0]))
+      .attr('y1', 0)
+      .attr('y1', bar_height + step_size);
+    bar
+      .append('line')
+      .attr('stroke', 'white')
+      .attr('stroke-width', 2)
+      .attr('x1', bar_scale(legend_MinMax[1]))
+      .attr('x2', bar_scale(legend_MinMax[1]))
+      .attr('y1', 0)
+      .attr('y1', bar_height + step_size);
+  }
+
 }
 drawMap()

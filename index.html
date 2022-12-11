@@ -1,81 +1,90 @@
 <!DOCTYPE html>
 <html>
-    <head>
-      <title>Info5100 Project3</title>
-      <script src="https://d3js.org/d3.v7.min.js"></script>
+
+<head>
+    <title>Info5100 Project3</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
-    </head>
-    <style>
-        body{
-            width:90%;
-            margin:auto;
-            font-family: Helvetica, Arial, sans-serif;
-            color:#575757;
-        }
-        p{
-            font-size: 18px;
-        }
-        .state {
-            fill: lightgrey;
-        }
+</head>
+<style>
+    body {
+        width: 90%;
+        margin: auto;
+        font-family: Helvetica, Arial, sans-serif;
+        color: #575757;
+    }
 
-        .outline {
-            stroke: black;
-            stroke-width: 2px;
-            fill: none;
-        }
+    p {
+        font-size: 18px;
+    }
 
-        .graticule {
-            fill: none;
-            stroke: grey;
-            stroke-width: 1px;
-        }
+    .state {
+        fill: lightgrey;
+    }
 
-        .tooltip {
-            pointer-events: none;
-        }
+    .outline {
+        stroke: black;
+        stroke-width: 2px;
+        fill: none;
+    }
 
-        h1 {
-            text-align: center;
-        }
-        .sectorLegend{
-            font-size:8px
-        }
-        .sector-axis .domain{
-            stroke: none;
-        }
-        .sector-grid{
-            opacity: 0.1;
-        }
-        .changeCol{
-            z-index: -1;
-        }
-        .sectorSublabel,
-        .sectorTitlelabel{
-            font-size: 12px;
-        }
+    .graticule {
+        fill: none;
+        stroke: grey;
+        stroke-width: 1px;
+    }
 
-        .sectorTitlelabel{
-            font-weight: 800;
+    .tooltip {
+        pointer-events: none;
+    }
 
-        }
-       
-    </style>
-    <body>
-        <h1>Project3</h1>
-        <h6>Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462), Jiaxin Li(jl3579), Peter Huang (mh2289)</h6>
-        <div>
-            <h3>Job Gains and Losses of each Sector</h3>
-            <p>Track the rises and falls of jobs provided in each sector in the past two decades. It might give indications about the development of the job market in the states.<br/>
+    .sectorLegend {
+        font-size: 8px
+    }
+
+    .sector-axis .domain {
+        stroke: none;
+    }
+
+    .sector-grid {
+        opacity: 0.1;
+    }
+
+    .changeCol {
+        z-index: -1;
+    }
+
+    .sectorSublabel,
+    .sectorTitlelabel {
+        font-size: 12px;
+    }
+
+    .sectorTitlelabel {
+        font-weight: 800;
+
+    }
+</style>
+
+<body>
+    <h1>Project3</h1>
+    <h6>Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462), Jiaxin Li(jl3579), Peter Huang (mh2289)
+    </h6>
+    <div>
+        <h3>Job Gains and Losses of each Sector</h3>
+        <p>Track the rises and falls of jobs provided in each sector in the past two decades. It might give indications
+            about the development of the job market in the states.<br />
             The boxes are colored by the change in number of jobs.</p>
-            <svg id="sectorGrid" width="1700" height="450"></svg>
-            <script src="./sector-job-change.js"></script>
-        </div>
-        
-         <div id="map container">
-            <h3> State unemployment rates in the US, October 2022, seasonally adjusted</h3>
-            <svg id="map" width="1400" height="700" style="background: gray;"></svg>
-            <script type="text/javascript" src="map_us.js"></script>
-        </div>
-    </body>
+        <svg id="sectorGrid" width="1700" height="450"></svg>
+        <script src="./sector-job-change.js"></script>
+    </div>
+
+    <div id="map container">
+        <h3> State unemployment rates in the US, October 2022, seasonally adjusted</h3>
+        <svg id="map" width="1400" height="700" style="background: gray;"></svg>
+        <svg id="map_legend" height="100" width="400"
+            style="background: rgba(255, 255, 255, 0.997); margin-top: 1%; margin-left: 20%"></svg>
+        <script type="text/javascript" src="map_us.js"></script>
+    </div>
+</body>
+
 </html>
