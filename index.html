@@ -10,12 +10,21 @@
         body{
             width:90%;
             margin:auto;
+            font-family: Helvetica, Arial, sans-serif
         }
         .sector-axis .domain{
             stroke: none;
         }
         .changeCol{
             z-index: -1;
+        }
+        .sectorSublabel,
+        .sectorTitlelabel{
+            font-size: 12px;
+        }
+
+        .sectorTitlelabel{
+            font-weight: 800;
         }
     </style>
     <body>
@@ -147,6 +156,8 @@
                             .join("rect")
                             .attr('class',"changeSquare")
                             .attr("fill", d=>sectorColorScale(d["change"]))
+                            .attr("stroke","#000")
+                            .attr("stroke-width",0)
                             .attr("x", d => yearScale(d["date"]))
                             .attr("y", d => rankScale(d["rank"]))
                             .attr("width", changeSqaureSize)
@@ -157,6 +168,77 @@
                             .on("mouseout", leaveSectorSqu)  
 
             
+                
+                let sectorTextLayer = sectorGrid.append("g")
+                                                .attr("id", "sectorTextBox")
+                                                .attr("transform",`translate(${sectorGridMargin.left},${sectorGridMargin.top})`);
+                let sectorTitleBox = sectorTextLayer.append("rect")
+                                                    .attr("id", "sectorSquareBox")
+                                                    .attr("height", 18)
+                                                    .style("fill", "#fff")
+                                                    .style("opacity", 0);
+                let sectorSubBox = sectorTextLayer.append("rect")
+                                                    .attr("id", "sectorSquareBox")
+                                                    .attr("height", 40)
+                                                    .style("fill", "#000")
+                                                    .style("opacity", 0);
+
+                let label1 = sectorTextLayer.append("text").attr("class", "sectorTitlelabel");
+                let label2 = sectorTextLayer.append("text").attr("class", "sectorSublabel");
+                let label3 = sectorTextLayer.append("text").attr("class", "sectorSublabel");
+                sectorTextLayer.selectAll("text.sectorTitlelabel")
+                                .style("fill", "#000")
+                                .attr("alignment-baseline", "middle");
+                sectorTextLayer.selectAll("text.sectorSublabel")
+                                .style("fill", "#fff")
+                                .attr("alignment-baseline", "middle");
+
+                let boxHeight = 0;
+                let boxWidth = 0;
+
+                //set tooptip text
+                //first line is sector
+                //second line is race
+                function setLabelText(d, x, y) {
+                    const sector = label1.text(d.sector);
+                    label2.text("Total jobs: " + d.value);
+                    label3.text("Changed: " + (d.change).toFixed(2) +"%");
+
+                    //set box width based on string length
+                    let len = sector.text().length  > 20 ? sector.text().length : 20;
+                    boxWidth = len * 8;d
+
+                    //handle edge case so that tooltips for dots close to boundary don't get cropped
+                    let offsetY = y < 40 ? 40 : 10;
+                    let offsetX = x > 1500 ? -180 : 10;
+
+                    label1.attr("x",5).attr("y", 10);
+                    label2.attr("x", 5).attr("y", 30);
+                    label3.attr("x", 5).attr("y", 45);
+
+                    sectorTitleBox.attr("x",  0)
+                                    .attr("y", 0)
+                                    .attr("width", boxWidth)
+                                    .style("opacity", 0.8);
+                    sectorSubBox.attr("x",  0)
+                                    .attr("y", 18)
+                                    .attr("width", boxWidth)
+                                    .style("opacity", 0.8);
+
+                    sectorTextLayer.attr("transform",
+                        `translate(${x+offsetX+sectorGridMargin.left},
+                        ${y+offsetY+sectorGridMargin.top})`);
+                }
+
+                // remove tooltip
+                function clearTooptip() {
+                    sectorSquareBox.style("opacity", 0);
+                    label1.text("");
+                    label2.text("");
+                    label3.text("");
+                }
+
+                
                 function hoverSectorCol(event,d){
                     d3.select(this)
                         .transition()
@@ -169,20 +251,30 @@
                         .duration(200)
                         .attr("opacity", 0)
                 }
-                
+
                 function hoverSectorSqu(event,d){
+                    d3.select(this).attr("stroke-width",2)
+                                    
+
                     const backCol = d3.selectAll("rect.changeCol")
                     .join("rect")
                     .attr("opacity",d=>
                         yearScale(d) == d3.select(this).attr("x") ?
                         1:0
-                    )
+                    );
+
+                    let x = Number(d3.select(this).attr("x"));
+                    let y = Number(d3.select(this).attr("y"));
+                    setLabelText(d, x, y)
                 }
 
                 function leaveSectorSqu(event,d){
+                    d3.select(this).attr("stroke-width",0)
+
                     const backCol = d3.selectAll("rect.changeCol")
                                     .join("rect")
-                                    .attr("opacity",0)
+                                    .attr("opacity",0);
+                    clearTooptip()
                 }
             }
             getSectorData();
