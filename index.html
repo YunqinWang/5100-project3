@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
-    <head lang="en">
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="https://d3js.org/topojson.v3.min.js"></script>
-
-        <title>Info5100 Project3</title>
+    <head>
+      <title>Info5100 Project3</title>
     </head>
     <style>
         body{
@@ -16,7 +13,29 @@
         p{
             font-size: 18px;
         }
-        
+        .state {
+            fill: lightgrey;
+        }
+
+        .outline {
+            stroke: black;
+            stroke-width: 2px;
+            fill: none;
+        }
+
+        .graticule {
+            fill: none;
+            stroke: grey;
+            stroke-width: 1px;
+        }
+
+        .tooltip {
+            pointer-events: none;
+        }
+
+        h1 {
+            text-align: center;
+        }
         .sectorLegend{
             font-size:8px
         }
@@ -49,6 +68,12 @@
             The boxes are colored by the change in number of jobs.</p>
             <svg id="sectorGrid" width="1700" height="450"></svg>
             <script src="./sector-job-change.js"></script>
+        </div>
+        
+         <div id="map container">
+            <h3> State unemployment rates in the US, October 2022, seasonally adjusted</h3>
+            <svg id="map" width="1400" height="700" style="background: gray;"></svg>
+            <script type="text/javascript" src="map_us.js"></script>
         </div>
     </body>
 </html>
