@@ -69,10 +69,12 @@
                     })
                     
                     //find the item closest to zero
-                    let firstAboveZero=-1;
+                    let firstAboveZero= sectorChange.length;
+                    let found = false;
                     sectorChange.forEach((item,index)=>{
-                        if(firstAboveZero== -1 && item.change>=0){
+                        if(!found && item.change>=0){
                             firstAboveZero = index;
+                            found = true;
                         }
                         
                     })
@@ -110,8 +112,7 @@
                     allChange.push(d["change"])  
                 })
                 
-                const changeExtent = d3.extent(sectorChangeData, d=>d.change)
-                console.log(changeExtent);                    
+                const changeExtent = d3.extent(sectorChangeData, d=>d.change)               
                 const sectorColorScale = d3.scaleQuantile()
                                             .domain(allChange)
                                             .range(["#5c74eb","#49c2ff",
