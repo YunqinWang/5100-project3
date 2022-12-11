@@ -47,8 +47,7 @@
                     let date = new Date(Date.parse(monthName  +" 1, "+year ));
 
                     let dPrev = sectorData[i-1]
-                    let sectorChange = {}
-                    sectorChange["sector"]=[]
+                    let sectorChange = []
                     
                     for(let[key,value] of Object.entries(d)){
                         
@@ -56,27 +55,38 @@
                         if(key != "Month"){
                             value = (Number(d[key].replace(",",""))-Number(dPrev[key].replace(",","")))
                                     /Number(d[key].replace(",",""));
-                            sectorChange["sector"].push({["name"] :key, ["change"]: value.toFixed(4)*1000});  
+                            sectorChange.push({
+                                "name" :key, 
+                                "change": value.toFixed(4)*100,
+                                "value":Number(d[key].replace(",",""))
+                            });  
                         }
                     }
 
                     //sort the change rate
-                    sectorChange["sector"].sort(function(a,b){
+                    sectorChange.sort(function(a,b){
                         return a.change -b.change ;
                     })
                     
                     //find the item closest to zero
                     let firstAboveZero=-1;
-                    sectorChange["sector"].forEach((item,index)=>{
+                    sectorChange.forEach((item,index)=>{
                         if(firstAboveZero== -1 && item.change>=0){
                             firstAboveZero = index;
                         }
                         
                     })
-                    sectorChange["sector"].forEach((d,i)=>{
-                        sectorChangeData.push({"date":date,"sector": d.name, "change":d.change, "rank":i-firstAboveZero})
+                    sectorChange.forEach((d,i)=>{
+                        sectorChangeData.push({
+                            "date":date,
+                            "sector": d.name, 
+                            "change":d.change, 
+                            "rank":i-firstAboveZero,
+                            "value":d.value
+                        })
                     })
                 }
+
                 console.log(sectorChangeData)
                 const yearExtent = d3.extent(sectorChangeData, d=>d.date)
                 const yearScale = d3.scaleTime().domain(yearExtent).range([0,sectorChartWidth]);
@@ -87,22 +97,6 @@
                                     .attr("transform",`translate(${sectorGridMargin.left-sectorAxisOffset},${sectorGridMargin.top})`)
                                     .call(topYearAxis)
 
-                // let changeExtent = d3.extent(sectorChangeData, d=> {
-                //     for (let[key,value] of Object.entries(d)){
-                //         if(key != "date") return value;
-                //     }
-                // })
-                
-                // changeExtent[0] = Math.floor(changeExtent[0])
-                // changeExtent[1] = Math.ceil(changeExtent[1])
-                // console.log(changeExtent)
-                // const changeScale = d3.scaleLinear().domain(changeExtent).range([sectorChartHeight,0]);
-                // const leftChangeAxis = d3.axisLeft(changeScale).tickFormat(d => d )
-                // sectorGridAnnotations.append("g")
-                //                     .attr("class", "change sector-axis")
-                //                     .attr("transform",`translate(${sectorGridMargin.left-sectorAxisOffset},${sectorGridMargin.top})`)
-                //                     .call(leftChangeAxis)
-                
                 const rankExtent = [-20,20]
                 const rankScale = d3.scaleLinear().domain(rankExtent).range([sectorChartHeight,0]);
                 const leftChangeAxis = d3.axisLeft(rankScale)
@@ -111,23 +105,28 @@
                                     .attr("transform",`translate(${sectorGridMargin.left-sectorAxisOffset},${sectorGridMargin.top})`)
                                     .call(leftChangeAxis)
 
+                let allChange = [];
+                sectorChangeData.forEach(d=>{
+                    allChange.push(d["change"])  
+                })
+                
+                const changeExtent = d3.extent(sectorChangeData, d=>d.change)
+                console.log(changeExtent);                    
+                const sectorColorScale = d3.scaleQuantile()
+                                            .domain(allChange)
+                                            .range(["#5c74eb","#49c2ff",
+                                            "#e3da3d","#ffaf4d","#ff6f56","#df3b82"])
+         
 
-                     
                 sectorChartArea.selectAll("rect.changeSquare").data(sectorChangeData)
                             .join("rect")
                             .attr('class',`changeSquare`)
-                            .attr("fill", "black")
+                            .attr("fill", d=>sectorColorScale(d["change"]))
                             .attr("x", d => yearScale(d["date"]))
-                            .attr("y", d => rankScale(d["rank"])
-                                
-                                
-                            )
-
-                            .attr("width", 5)
-                            .attr("height", 5)
-                
-                
-                                
+                            .attr("y", d => rankScale(d["rank"]))
+                            .attr("width", 6)
+                            .attr("height", 6)   
+                            .attr("transform","translate(-6,-6)")     
 
             }
             getSectorData();
@@ -135,3 +134,15 @@
         </script>
     </body>
 </html>
+
+<style>
+
+    body{
+        color:#5c74eb
+        #49c2ff
+        #e3da3d
+        #ffaf4d
+        #ff6f56
+        #df3b82
+    }
+</style>
