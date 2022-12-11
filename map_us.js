@@ -24,7 +24,7 @@ const drawMap = async function () {
   unemplymentRate.forEach(row => {
 
     stateNames[row.state_code] = row.State;
-    unemployment_rate_2021[row.state_code] = Number(row.October_2022_unemployment_rate)
+    unemployment_rate_2021[row.state_code] = Number(row.October_2021_unemployment_rate)
     unemployment_rate_2022[row.state_code] = Number(row.October_2022_unemployment_rate)
     change_rate[row.state_code] = Number(row.change_12_month)
   })
