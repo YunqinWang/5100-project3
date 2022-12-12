@@ -90,7 +90,7 @@ function updateAnimated(sectorKey){
         .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top+chartHeight})`)
         .call(bottomAxis)
     annotations.append("g")
-        .attr("class", "x gridlines")
+        .attr("class", "sector-grid")
         .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top+chartHeight})`)
         .call(bottomGridlines);
 
@@ -98,6 +98,7 @@ function updateAnimated(sectorKey){
 
     chartArea.selectAll("path").remove();
     chartArea.selectAll('circle').remove();
+    
 
     chartArea.append("path")
         .attr("d", lineGen(sectorChangeData))
