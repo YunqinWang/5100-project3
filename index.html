@@ -1,90 +1,109 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Info5100 Project3</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
-</head>
-<style>
+  </head>
+  <style>
     body {
-        width: 90%;
-        margin: auto;
-        font-family: Helvetica, Arial, sans-serif;
-        color: #575757;
+      width: 90%;
+      margin: auto;
+      font-family: Helvetica, Arial, sans-serif;
+      color: #575757;
     }
 
     p {
-        font-size: 18px;
+      font-size: 18px;
     }
 
     .state {
-        fill: lightgrey;
+      fill: lightgrey;
     }
 
     .outline {
-        stroke: black;
-        stroke-width: 2px;
-        fill: none;
+      stroke: black;
+      stroke-width: 2px;
+      fill: none;
     }
 
     .graticule {
-        fill: none;
-        stroke: grey;
-        stroke-width: 1px;
+      fill: none;
+      stroke: grey;
+      stroke-width: 1px;
     }
 
     .tooltip {
-        pointer-events: none;
+      pointer-events: none;
     }
 
     .sectorLegend {
-        font-size: 8px
+      font-size: 8px;
     }
 
     .sector-axis .domain {
-        stroke: none;
+      stroke: none;
     }
 
     .sector-grid {
-        opacity: 0.1;
+      opacity: 0.1;
     }
 
     .changeCol {
-        z-index: -1;
+      z-index: -1;
     }
 
     .sectorSublabel,
     .sectorTitlelabel {
-        font-size: 12px;
+      font-size: 12px;
     }
 
     .sectorTitlelabel {
-        font-weight: 800;
-
+      font-weight: 800;
     }
-</style>
+  </style>
 
-<body>
+  <body>
     <h1>Project3</h1>
-    <h6>Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462), Jiaxin Li(jl3579), Peter Huang (mh2289)
+    <h6>
+      Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462),
+      Jiaxin Li(jl3579), Peter Huang (mh2289)
     </h6>
     <div>
-        <h3>Job Gains and Losses of each Sector</h3>
-        <p>Track the rises and falls of jobs provided in each sector in the past two decades. It might give indications
-            about the development of the job market in the states.<br />
-            The boxes are colored by the change in number of jobs.</p>
-        <svg id="sectorGrid" width="1700" height="450"></svg>
-        <script src="./sector-job-change.js"></script>
+      <h3>Job Gains and Losses of each Sector</h3>
+      <p>
+        Track the rises and falls of jobs provided in each sector in the past
+        two decades. It might give indications about the development of the job
+        market in the states.<br />
+        The boxes are colored by the change in number of jobs.
+      </p>
+      <svg id="sectorGrid" width="1700" height="450"></svg>
+      <script src="./sector-job-change.js"></script>
     </div>
 
     <div id="map container">
-        <h3> State unemployment rates in the US, October 2022, seasonally adjusted</h3>
-        <svg id="map" width="1400" height="700" style="background: gray;"></svg>
-        <svg id="map_legend" height="100" width="400"
-            style="background: rgba(255, 255, 255, 0.997); margin-top: 1%; margin-left: 20%"></svg>
-        <script type="text/javascript" src="map_us.js"></script>
+      <h3>
+        State unemployment rates in the US, October 2022, seasonally adjusted
+      </h3>
+      <svg id="map" width="1400" height="700" style="background: gray"></svg>
+      <svg
+        id="map_legend"
+        height="100"
+        width="400"
+        style="
+          background: rgba(255, 255, 255, 0.997);
+          margin-top: 1%;
+          margin-left: 20%;
+        "
+      ></svg>
+      <script type="text/javascript" src="map_us.js"></script>
     </div>
-</body>
 
+    <div>
+      <h3>State unemployment rates filtered by gender</h3>
+      <svg id="lineplot" width="900" height="300"></svg>
+      <div id="line-button-bar">Gender Filter:</div>
+      <script type="text/javascript" src="linechart.js"></script>
+    </div>
+  </body>
 </html>
