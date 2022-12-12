@@ -189,18 +189,39 @@ activeRegion.on("mousemove", function(evt) {
 }
 
 
-// add buttons
+// get key text for buttons
 const allKeys = Object.keys(sectorChangeData[0]).filter(d=>d!="date");
 console.log(allKeys);
 allKeys.forEach(d=>{
     d3.select("div#button-bar")
     .append("button")
     .text(d)
+    .attr("class","button-bar")
     .on('click', function(){
         updateAnimated(d);
     })
     
 });
+
+//button style
+let allButton = d3.selectAll(".button-bar"); // select all elements with class "button-bar"
+const nodes = allButton.nodes();
+allButton
+    .style("background", "none")
+    .style("border", "1px solid black")
+    .style("border-radius", "5px")
+    .style("padding", "3x 10px 5px 10px"); // apply styles to elements
+
+allButton.on("mouseover", function () {
+    d3.select(this).style("background", "black");
+    d3.select(this).style("color", "white");
+});
+
+allButton.on("mouseout", function () {
+    d3.select(this).style("background", "none");
+    d3.select(this).style("color", "black");
+});
+
 }
 
 
