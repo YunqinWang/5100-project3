@@ -25,7 +25,7 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
 
         allYear.push(date)
     
-        let dPrev = sectorData[i-1]
+
         let sectorChange = []
         
         for(let[key,value] of Object.entries(d)){
@@ -60,12 +60,14 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
 function updateAnimated(sectorKey){
     let sectorExtent = d3.extent(sectorChangeData, d=>d[sectorKey]['value']);
     let sectorScale = d3.scaleLinear().domain(sectorExtent).range([chartHeight, 0]);
+
+    //  delete leftAxis and leftGridlines
     let leftAxis = d3.axisLeft(sectorScale)
     let leftGridlines = d3.axisLeft(sectorScale)
                             .tickSize(-chartWidth-10)
                             .tickFormat("")
 
-//  delete leftAxis and leftGridlines
+
     // annotations.append("g")
     //     .attr("class", "y axis")
     //     .attr("transform",`translate(${sectorMargin.left-10},${sectorMargin.top})`)
@@ -78,7 +80,7 @@ function updateAnimated(sectorKey){
 
     const dateExtent = d3.extent(sectorChangeData, d => d.date);
     const dateScale = d3.scaleTime().domain(dateExtent).range([0, chartWidth]);
-    console.log(dateExtent);
+    // console.log(dateExtent);
     let bottomAxis = d3.axisBottom(dateScale)
     let bottomGridlines = d3.axisBottom(dateScale)
                             .tickSize(-chartHeight-10)
