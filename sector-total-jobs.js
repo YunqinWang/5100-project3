@@ -53,11 +53,9 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
             "Leisure":sectorChange[11],
             "Other":sectorChange[12],
             "Government":sectorChange[13],
-        
-           
-
         })}
-console.log(sectorChangeData);
+
+// console.log(sectorChangeData);
     
 function updateAnimated(sectorKey){
     let sectorExtent = d3.extent(sectorChangeData, d=>d[sectorKey]['value']);
@@ -119,7 +117,7 @@ function updateAnimated(sectorKey){
     let xMarker = mouseGroup.append("line")
         .attr("id","xMarker")
         .attr("fill","none")
-        .attr("stroke","black")
+        .attr("stroke","purple")
         .attr("stroke-width",1)
         .attr("y1",0)
         .attr("y2",chartHeight)
@@ -130,7 +128,7 @@ function updateAnimated(sectorKey){
         .attr("fill","none")
         .attr("stroke","black")
         .attr("stroke-width",2)
-        .attr("r",10)
+        .attr("r",8)
         .attr("visibility","hidden");
 
     let label = mouseGroup.append("text")
