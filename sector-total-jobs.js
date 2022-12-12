@@ -1,4 +1,4 @@
-const sectorLineChart = d3.select("#linechart2");
+const sectorLineChart = d3.select("#sectorLineChart");
     const sectorWidth = sectorLineChart.attr("width");
     const sectorHight = sectorLineChart.attr("height");
     const sectorMargin = {top: 10, right: 10, bottom: 50, left: 50};
@@ -10,4 +10,9 @@ const sectorLineChart = d3.select("#linechart2");
                     .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top})`);
 
 
+
+
+
+
+getData();
 
