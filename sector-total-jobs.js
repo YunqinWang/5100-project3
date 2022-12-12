@@ -188,7 +188,18 @@ activeRegion.on("mousemove", function(evt) {
 }
 
 
-
+// add buttons
+const allKeys = Object.keys(sectorChangeData[0]).filter(d=>d!="date");
+console.log(allKeys);
+allKeys.forEach(d=>{
+    d3.select("div#button-bar")
+    .append("button")
+    .text(d)
+    .on('click', function(){
+        updateAnimated(d);
+    })
+    
+});
 }
 
 
