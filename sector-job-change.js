@@ -27,7 +27,7 @@ sectorChartArea.append("rect").attr("x",-changeSqaureSize*2).attr("y",0)
 const sectorComp = d3.select("#sectorCompete");
 const sectorCompWidth = sectorComp.attr("width");
 const sectorCompHeight = sectorComp.attr("height");
-const sectorCompMargin = {top: 70, right: 50, bottom: 10, left: 50};
+const sectorCompMargin = {top: 40, right: 50, bottom: 10, left: 50};
 const sectorBarWidth = sectorCompWidth - sectorCompMargin.left - sectorCompMargin.right;
 const sectorBarHeight = sectorCompHeight - sectorCompMargin.top - sectorCompMargin.bottom;
 const sectorBarAxisOffset = 10;
@@ -38,9 +38,11 @@ const sectorBarGrids = sectorComp.append("g").attr("id","sectorBarGrids")
 const sectorBarArea = sectorComp.append("g").attr("id","sectorBar")
                                 .attr("transform",`translate(${sectorCompMargin.left},${sectorCompMargin.top})`);
 
+
 const getSectorData = async ()=>{
+    //load data
     const sectorData = await d3.csv("./sector_employment_data.csv");
-    
+
     let allYear = []
     let sectorChangeData = [];
     let allSectors=[];
@@ -101,6 +103,10 @@ const getSectorData = async ()=>{
         })
     }
 
+
+    /* grid
+    --------------------------------------------------------------------------------------------------------
+    */
     const yearExtent = d3.extent(sectorChangeData, d=>d.date)
     const yearScale = d3.scaleTime().domain(yearExtent).range([0,sectorChartWidth]);
 
@@ -328,21 +334,42 @@ const getSectorData = async ()=>{
         clearTooptip();
     }
 
-
-    //bar animation
+    /* bar animation
+    --------------------------------------------------------------------------------------------------------
+    */
     const sectorColors = ["#9eadf3","#49c2ff","#e3da3d","#ffaf4d","#ff6f56","#f3bad2",
                             "#d5e2a3","#d5caee","#eb7cc7","#b7d0ff","#9fe0ff","#b6e9e1","#c2eeb3",
                             "#c2e33e","#f1dda9","#f2c89d","#ffafa2","#f3bad2","#e9b6f8"]
     const sectorScale = d3.scaleOrdinal().domain(allSectors).range(sectorColors);
+    
+    //left ranking axis
     const racingRankExtent = [1,allSectors.length];
     const racingRankScale = d3.scaleLinear().domain(racingRankExtent).range([sectorBarHeight,0]);
-    const leftAbsRankAxis = d3.axisLeft(racingRankScale)
-
+    const leftAbsRankAxis = d3.axisLeft(racingRankScale).tickFormat(d => allSectors.length-d);
     sectorBarAnnotations.append("g")
                         .attr("class", "change bar-axis")
                         .attr("transform",`translate(${sectorCompMargin.left-sectorBarAxisOffset},${sectorCompMargin.top})`)
                         .call(leftAbsRankAxis)
+                        
  
+    //axis label
+    sectorBarAnnotations.append("text")
+                        .attr("class", "bar-axis-label")
+                        .text("Monthly Change Rate")
+                        .attr("text-anchor", "end")
+                        .attr("alignment-baseline","hanging")
+                        .attr("transform",`translate(${ sectorCompWidth-sectorGridMargin.right-sectorBarAxisOffset},${10})`)
+    sectorBarAnnotations.append("text")
+                        .attr("class", "bar-axis-label")
+                        .text("#Ranking")
+                        .attr("text-anchor", "start")
+                        .attr("alignment-baseline","hanging")
+                        .attr("transform",`translate(${0},${10})`)
+    
+    //animation interval
+    const interval = 1500;
+    const intervalPause = 800;
+
     let sectorRacingData={};
     
     allSectors.forEach(d=>{
@@ -355,22 +382,26 @@ const getSectorData = async ()=>{
 
     let currentDate =0;
     let currentChangeData=[];
-    sectorBarAnnotations.append("g")
-                        .attr("class", "change-bar-axis bar-axis")
-                        .attr("transform",`translate(${sectorCompMargin.left-sectorBarAxisOffset},${sectorCompMargin.top})`)
-    sectorBarAnnotations.append("g")
-                        .attr("class", "change-bar-grid bar-grid")
-                        .attr("transform",`translate(${sectorCompMargin.left-sectorBarAxisOffset},${sectorCompMargin.top})`)
+
 
     function updateChangeScale(currentChangeData){
         let changeExtent = d3.extent(currentChangeData, d=>d.change)
-        let changeScale = d3.scaleLinear().domain(changeExtent).range([0,sectorBarWidth]);
+        let min = Math.floor(changeExtent [0]*10)/10;
+        let max = Math.ceil(changeExtent [1]*10)/10;
+        let changeScale = d3.scaleLinear().domain([min,max]).range([0,sectorBarWidth-sectorBarAxisOffset]);
         return changeScale;
     }
 
     function updateChangeAxis(changeScale){
         //vertical grid
-        let changeLabel = [-0.2,0,0.2]
+        let changeDomain = changeScale.domain();
+        let changeLabel = [];
+        changeLabel.push(changeDomain[0]);
+        if(-0.2>changeDomain[0]) changeLabel.push(-0.2);
+        changeLabel.push(0);
+        if(0.2<changeDomain[1]) changeLabel.push(0.2);
+        changeLabel.push(changeDomain[1]);
+
         sectorBarGrids.selectAll("line.change-bar-axis").data(changeLabel)
             .join( enter => enter.append('line')
                             .attr('class','change-bar-axis')
@@ -382,11 +413,9 @@ const getSectorData = async ()=>{
                             .attr("y2", sectorBarHeight+20)
                             .attr("opacity", 0)
                             .call( enter => enter.transition().attr('opacity',1) ),
-                update => update.call( update => update.transition()
+                update => update.call( update => update.transition().duration(interval-intervalPause)
                                 .attr("x1", d=>changeScale(d))
-                                .attr("y1", 10)
                                 .attr("x2",  d=>changeScale(d))
-                                .attr("y2", sectorBarHeight+20)
                     ),
         exit => exit.call( exit => exit.transition().attr('opacity',0).remove() ) ); 
         
@@ -394,38 +423,34 @@ const getSectorData = async ()=>{
         sectorBarGrids.selectAll("text.change-bar-label").data(changeLabel)
             .join( enter => enter.append('text')
                             .attr('class','change-bar-label')
-                            .text(d=>d)
+                            .text(d=>d+'%')
                             .attr("x", d=>changeScale(d))
                             .attr("y", 0)
                             .attr("opacity", 0)
                             .attr("text-anchor","middle")
                             .call( enter => enter.transition()
                                                 .attr('opacity',1) ),
-                update => update.call( update => update.transition()
-                                .text(d=>d)
+                update => update.call( update => update.transition().duration(interval-intervalPause)
+                                .text(d=>d+'%')
                                 .attr("x", d=>changeScale(d))
-                                .attr("y", 0)
                             ),
                 exit => exit.call( exit => exit.transition().attr('opacity',0).remove() ) ); 
     }
 
     function updateRaceYear(currentChangeData){
-        sectorBarGrids.selectAll("text.racing-year-label").data([currentChangeData[0]])
+        sectorBarAnnotations.selectAll("text.racing-year-label").data([currentChangeData[0]])
         .join( 
         enter => enter.append('text')
                     .attr('class','racing-year-label')
                     .text(d=>d.date.getMonth()+1+"/"+d.date.getFullYear())
-                    .attr("x", sectorBarWidth-sectorCompMargin.right)
-                    .attr("y", sectorBarHeight)
+                    .attr("x", sectorCompWidth-sectorGridMargin.right-sectorBarAxisOffset)
+                    .attr("y", sectorCompHeight-10)
                     .attr("opacity", 0)
-                    .attr("transform", `translate(0,-10)`)
                     .attr("text-anchor","end")
                     .call( enter => enter.transition()
                                         .attr('opacity',1) ),
-        update => update.call( update => update.transition()
+        update => update.call( update => update.transition().duration(interval-intervalPause)
                         .text(d=>d.date.getMonth()+1+"/"+d.date.getFullYear())
-                        .attr("x", sectorBarWidth-sectorCompMargin.right)
-                        .attr("y", sectorBarHeight)
                     ),
         exit => exit.call( exit => exit.transition().attr('opacity',0).remove() ) ); 
     }
@@ -440,15 +465,12 @@ const getSectorData = async ()=>{
                             .attr("y", d=> racingRankScale (d["absoluteRank"]))
                             .attr("height",  20)
                             .attr("width", d=>changeScale(d["change"]))
-                            .attr("opacity", 0)
+                            .attr("opacity", 0.7)
                             .attr("transform", `translate(0,-10)`)
-                            .call( enter => enter.transition()
-                                                .attr('opacity',1) ),
-                update => update.call( update => update.transition()
-                                .attr("fill", d=>sectorScale(d.sector))
-                                .attr("x", 0)
+                            .call( enter => enter.transition().duration(interval-intervalPause)
+                            ),
+                update => update.call( update => update.transition().duration(interval-intervalPause)
                                 .attr("y", d=> racingRankScale (d["absoluteRank"]))
-                                .attr("height",  20)
                                 .attr("width", d=>changeScale(d["change"]))
                             ),
                 exit => exit.call( exit => exit.transition().attr('opacity',0).remove() ) ); 
@@ -465,9 +487,8 @@ const getSectorData = async ()=>{
                             .attr("alignment-baseline","central")
                             .call( enter => enter.transition()
                                                 .attr('opacity',1) ),
-                update => update.call( update => update.transition()
+                update => update.call( update => update.transition().duration(interval-intervalPause)
                                 .text(d=>d["sector"])
-                                .attr("x", 10)
                                 .attr("y", d=> racingRankScale (d["absoluteRank"]))
                             ),
                 exit => exit.call( exit => exit.transition().attr('opacity',0).remove() ) ); 
@@ -476,45 +497,54 @@ const getSectorData = async ()=>{
       sectorBarArea.selectAll("text.sector-num-label").data(currentChangeData)
       .join( enter => enter.append('text')
                         .attr('class','sector-num-label')
-                        .text(d=>d["value"])
+                        .text(d=>d3.format(',')(d["value"]))
                         .attr("x", d=>changeScale(d["change"])+5)
                         .attr("y", d=> racingRankScale (d["absoluteRank"]))
                         .attr("opacity", 0)
                         .attr("text-anchor","start")
                         .attr("alignment-baseline","central")
-                        .call( enter => enter.transition()
+                        .call( enter => enter.transition().duration(interval-intervalPause)
                                             .attr('opacity',1) ),
             update => update.call( update => update.transition()
-                            .text(d=>d["value"])
+                            .text(d=>d3.format(',')(d["value"]))
                             .attr("x", d=>changeScale(d["change"])+5)
                             .attr("y", d=> racingRankScale (d["absoluteRank"]))
                         ),
             exit => exit.call( exit => exit.transition().attr('opacity',0).remove() ) ); 
-    }
-    // let a=[]
-    // allSectors.forEach((d,i)=>{
-    //     a.push(sectorRacingData[allSectors[i]][0]);
-    // })
-    // console.log(a)
-    // let aExtent = d3.extent(a, d=>d.change)
-    // let aScale = d3.scaleLinear().domain(aExtent).range([0,sectorBarWidth]);
+    }                    
 
-    // sectorBarArea.selectAll("rect.racingBar").data(a)
-    //                     .join('rect')
-    //                     .attr('class','racingBar')
-    //                     .attr("fill", d=>sectorScale(d.sector))
-    //                     .attr("x", 0)
-    //                     .attr("y", d=> racingRankScale (d["absoluteRank"]))
-    //                     .attr("height",  20)
-    //                     .attr("width", d=>aScale(d["change"]))
-    //                     .attr("transform", `translate(0,-10)`)
     
-                        
+    
+    let yearRange = [yearExtent[0].getFullYear(),yearExtent[1].getFullYear()];
+    for(let y=yearRange[0];y<=yearRange[1];y++){
+        if(y%5==0) {
+            d3.select("div#sector-compete-btn")
+            .append("button")
+            .text( y )
+            .on("click", function(){updateBarsToYear( y )})
+        }
+    }
+
+    d3.select("div#sector-compete-btn")
+            .append("button")
+            .text( "Reset" )
+            .on("click", function(){reset()})
 
     let tick = function(){
-        currentChangeData=[];
         currentDate ++;
+        update();
+    }
+    let changeRacing = setInterval( tick, interval );
 
+    function updateBarsToYear(year){
+        currentDate = (year - yearExtent[0].getFullYear()-1)*12+1;
+        update();
+        window.clearTimeout(changeRacing);
+        changeRacing= setInterval( tick, interval )
+    }
+
+    function update(){
+        currentChangeData=[];
         if(currentDate>=sectorData.length) clearInterval(changeRacing);
         allSectors.forEach((d,i)=>{
             currentChangeData.push(sectorRacingData[allSectors[i]][currentDate]);
@@ -524,8 +554,12 @@ const getSectorData = async ()=>{
         updateChangeAxis(changeScale);
         updateRaceYear(currentChangeData);
     }
-    let changeRacing = setInterval( tick, 1500 );
-    
+
+    function reset(){
+        currentDate = 0;
+        update();
+    }
+
 }
 
 getSectorData();

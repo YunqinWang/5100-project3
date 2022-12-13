@@ -12,6 +12,9 @@
             font-family: Helvetica, Arial, sans-serif;
             color:#575757;
         }
+        h1 {
+            text-align: center;
+        }
         p{
             font-size: 18px;
         }
@@ -35,9 +38,8 @@
             pointer-events: none;
         }
 
-        h1 {
-            text-align: center;
-        }
+        
+        /* -------------------------Sectors Grid----------------------------- */
         .sectorLegend{
             font-size:8px
         }
@@ -48,9 +50,7 @@
         .sector-grid{
             opacity: 0.1;
         }
-        .bar-grid{
-            opacity: 0.3;
-        }
+        
         .changeCol{
             z-index: -1;
         }
@@ -70,17 +70,72 @@
        .sector-num-label{
             font-size: 12px;
        }
+       /* -------------------------End of Sectors Grid----------------------------- */
+
+       /* -------------------------Racing Sectors----------------------------- */
+       .bar-grid{
+            opacity: 0.3;
+        }
+       
+       .bar-axis-label{
+            font-size: 15px;
+       }
+
+       .compete-container{
+            margin:2em auto;
+            width:fit-content
+       }
+        
+       .compete{
+           display:flex;
+           align-items:flex-end;
+       }
+       .sector-compete-panel{
+            margin-top:5em;
+            margin:5em 0 0 2em;
+            padding: 1em;
+            height:fit-content;
+       }
+       .sector-compete-panel p{
+            align-content: center;
+            margin-top: 0;
+       }
+       #sector-compete-btn{
+            display:grid;
+            grid-template-columns: 1fr;
+            column-gap: 0.5em;
+            row-gap: 0.5em;
+       }
+       #sector-compete-btn button{
+            width:5em;
+            padding: 0.2em 1em;
+            display:block;
+       }
+       /* -------------------------End of Racing Sectors----------------------------- */
 
     </style>
     <body>
         <h1>Project3</h1>
         <h6>Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462), Jiaxin Li(jl3579), Peter Huang (mh2289)</h6>
-        <div>
+        <div class="">
             <h3>Job Gains and Losses of each Sector</h3>
             <p>Track the rises and falls of jobs provided in each sector in the past two decades. It might give indications about the development of the job market in the states.<br/>
             The boxes are colored by the change in number of jobs.</p>
             <svg id="sectorGrid" width="1550" height="450"></svg>
-            <svg id="sectorCompete" width="1000" height="500"></svg>
+            
+            <div class="compete-container">
+               
+                    <p >Sector Ranking based on the monthly change of job provided</p>
+                    <div class="compete">
+                        <svg id="sectorCompete" width="1000" height="500"></svg>
+                        <div class="sector-compete-panel">
+                            <p>Switch to:</p>
+                            <div id="sector-compete-btn">
+                            </div>
+                        </div>
+                    </div>
+               
+            </div>
             <script src="./sector-job-change.js"></script>
         </div>
         
