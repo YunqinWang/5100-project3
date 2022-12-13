@@ -18,8 +18,33 @@
         p{
             font-size: 18px;
         }
+
+        button {
+            height: 38px;
+            padding: 0 30px;
+            margin: 0 10px 10px 0;
+            color: #555;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 38px;
+            letter-spacing: .1rem;
+            text-transform: uppercase;
+            background-color: transparent;
+            border-radius: 4px;
+            border: 1px solid #bbb;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        button:hover{
+            background:#000;
+            color:#fff;
+        }
+
+        /* -------------------------Map----------------------------- */
         .state {
-            fill: lightgrey;
+            
         }
 
         .outline {
@@ -37,27 +62,7 @@
         .tooltip {
             pointer-events: none;
         }
-
-        .job-trend button {
-            display: inline-block;
-            height: 38px;
-            padding: 0 30px;
-            margin: 0 10px 10px 0;
-            color: #555;
-            text-align: center;
-            font-size: 11px;
-            font-weight: 600;
-            line-height: 38px;
-            letter-spacing: .1rem;
-            text-transform: uppercase;
-            text-decoration: none;
-            white-space: nowrap;
-            background-color: transparent;
-            border-radius: 4px;
-            border: 1px solid #bbb;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
+        /* -------------------------End of Map----------------------------- */
         
         /* -------------------------Sectors Grid----------------------------- */
         .sectorLegend{
@@ -70,7 +75,9 @@
         .sector-grid{
             opacity: 0.1;
         }
-        
+        .sector-grid-label{
+        font-size: 15px;
+        }
         .changeCol{
             z-index: -1;
         }
@@ -125,11 +132,6 @@
             grid-template-columns: 1fr;
             column-gap: 0.5em;
             row-gap: 0.5em;
-       }
-       #sector-compete-btn button{
-            width:5em;
-            padding: 0.2em 1em;
-            display:block;
        }
        /* -------------------------End of Racing Sectors----------------------------- */
 

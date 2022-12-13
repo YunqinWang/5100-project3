@@ -122,6 +122,19 @@ const getSectorData = async ()=>{
                         .attr("class", "year sector-grid")
                         .attr("transform",`translate(${sectorGridMargin.left-sectorChartAxisOffset},${sectorGridMargin.top})`)
                         .call(annualBottomGridlines)
+    sectorGridAnnotations.append("text")
+                        .attr("class", "sector-grid-label")
+                        .text("Year")
+                        .attr("alignment-baseline","baseline")
+                        .attr("text-anchor","end")
+                        .attr("transform",`translate(${sectorGridWidth-sectorGridMargin.right},${sectorGridMargin.top-8})`)
+    sectorGridAnnotations.append("text")
+                        .attr("class", "sector-grid-label")
+                        .text("#Ranking")
+                        .attr("alignment-baseline","baseline")
+                        .attr("text-anchor","start")
+                        .attr("transform",`translate(${sectorChartAxisOffset},${sectorGridMargin.top-8})`)
+                      
 
     const rankExtent = [-20,20]
     const rankScale = d3.scaleLinear().domain(rankExtent).range([sectorChartHeight,0]);
@@ -367,8 +380,8 @@ const getSectorData = async ()=>{
                         .attr("transform",`translate(${0},${10})`)
     
     //animation interval
-    const interval = 1500;
-    const intervalPause = 800;
+    const interval = 1200;
+    const intervalPause = 600;
 
     let sectorRacingData={};
     
