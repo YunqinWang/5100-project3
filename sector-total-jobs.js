@@ -56,6 +56,7 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
         })}
     
 function updateAnimated(sectorKey){
+   
     let sectorExtent = d3.extent(sectorChangeData, d=>d[sectorKey]['value']);
     let sectorScale = d3.scaleLinear().domain(sectorExtent).range([chartHeight, 0]);
 
@@ -181,12 +182,24 @@ allKeys.forEach(d=>{
     d3.select("div#button-bar")
     .append("button")
     .text(d)
-    .attr("class","button-bar")
-    .on('click', function(){
-        updateAnimated(d);
-    })
+    .attr("class","sector-name-button")
+    .on('click', setBtnColor)
 });
+
+function setBtnColor(){
+    let text = d3.select(this).text();
+    d3.selectAll(".sector-name-button").style("background","none").style("color","#000");
+    d3.select(this).style("background","#000").style("color","#fff");
+    updateAnimated(text);
 }
 
+//set default view to be the first sector
+let firstBtn = d3.selectAll(".sector-name-button")
+    .filter((d, i)=> i == 0)
+firstBtn.style("background","#000").style("color","#fff");
+updateAnimated(allKeys[0]);
+
+
+}
 getData();
 
