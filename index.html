@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Info5100 Project3</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://d3js.org/topojson.v3.min.js"></script>
-   </head>
+    <head>
+        <title>Info5100 Project3</title>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="https://d3js.org/topojson.v3.min.js"></script>
+    </head>
     <style>
         body{
             width:90%;
@@ -38,40 +38,26 @@
             pointer-events: none;
         }
 
-
-    .changeCol {
-      z-index: -1;
-    }
-
-    .sectorSublabel,
-    .sectorTitlelabel {
-      font-size: 12px;
-    }
-
-    .sectorTitlelabel {
-      font-weight: 800;
-    }
-
-    button {
-      display: inline-block;
-      height: 38px;
-      padding: 0 30px;
-      margin: 0 10px 10px 0;
-      color: #555;
-      text-align: center;
-      font-size: 11px;
-      font-weight: 600;
-      line-height: 38px;
-      letter-spacing: .1rem;
-      text-transform: uppercase;
-      text-decoration: none;
-      white-space: nowrap;
-      background-color: transparent;
-      border-radius: 4px;
-      border: 1px solid #bbb;
-      cursor: pointer;
-      box-sizing: border-box;
-    }
+        .job-trend button {
+            display: inline-block;
+            height: 38px;
+            padding: 0 30px;
+            margin: 0 10px 10px 0;
+            color: #555;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 38px;
+            letter-spacing: .1rem;
+            text-transform: uppercase;
+            text-decoration: none;
+            white-space: nowrap;
+            background-color: transparent;
+            border-radius: 4px;
+            border: 1px solid #bbb;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
         
         /* -------------------------Sectors Grid----------------------------- */
         .sectorLegend{
@@ -149,70 +135,67 @@
 
     </style>
 
-  <body>
-    <h1>Project3</h1>
-    <h6>
-      Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462),
-      Jiaxin Li(jl3579), Peter Huang (mh2289)
-    </h6>
+    <body>
+        <h1>Project3</h1>
+        <h6>
+        Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462),
+        Jiaxin Li(jl3579), Peter Huang (mh2289)
+        </h6>
 
-    <div>
-      <h3>Job Gains and Losses of each Sector</h3>
-      <div>
-        <p>
-          Track the rises and falls of jobs provided in each sector in the past
-          two decades. It might give indications about the development of the job
-          market in the states.<br />
-          The boxes are colored by the change in number of jobs.
-        </p>
-        <svg id="sectorGrid" width="1700" height="450"></svg>
-      </div>
-      <div class="compete-container">
-               
-                    <p >Sector Ranking based on the monthly change of job provided</p>
-                    <div class="compete">
-                        <svg id="sectorCompete" width="1000" height="500"></svg>
-                        <div class="sector-compete-panel">
-                            <p>Switch to:</p>
-                            <div id="sector-compete-btn">
-                            </div>
-                        </div>
+        <div>
+        <h3>Job Gains and Losses of each Sector</h3>
+        <div class="grid-container">
+            <p>
+            Track the rises and falls of jobs provided in each sector in the past
+            two decades. It might give indications about the development of the job
+            market in the states.<br />
+            The boxes are colored by the change in number of jobs.
+            </p>
+            <svg id="sectorGrid" width="1700" height="450"></svg>
+        </div>
+        <div class="compete-container">                
+            <p >Sector Ranking based on the monthly change of job provided</p>
+            <div class="compete">
+                <svg id="sectorCompete" width="1000" height="500"></svg>
+                <div class="sector-compete-panel">
+                    <p>Switch to:</p>
+                    <div id="sector-compete-btn">
                     </div>
-               
+                </div>
             </div>
             <script src="./sector-job-change.js"></script>
-    </div>
+        </div>
 
-    <div>
-      <h3>Overall Trend: Total Jobs for Each Sector (Please click button to show graph) </h3>
-      <div id="button-bar"></div>
-      <svg id="sectorLineChart" width="1100" height="550"></svg>
-      <script src="/sector-total-jobs.js"></script>
-      <div>
+        <div class="job-trend">
+            <h3>Overall Trend: Total Jobs for Each Sector (Please click button to show graph) </h3>
+            <div id="button-bar"></div>
+            <svg id="sectorLineChart" width="1100" height="550"></svg>
+            <script src="./sector-total-jobs.js"></script>
+        </div>
 
-    <div id="map container">
-      <h3>
-        State unemployment rates in the US, October 2022, seasonally adjusted
-      </h3>
-      <svg id="map" width="1400" height="700" style="background: gray"></svg>
-      <svg
-        id="map_legend"
-        height="100"
-        width="400"
-        style="
-          background: rgba(255, 255, 255, 0.997);
-          margin-top: 1%;
-          margin-left: 20%;
-        "
-      ></svg>
-      <script type="text/javascript" src="map_us.js"></script>
-    </div>
+        <div id="map-container">
+            <h3>
+                State unemployment rates in the US, October 2022, seasonally adjusted
+            </h3>
+            <svg id="map" width="1400" height="700" style="background: gray"></svg>
+            <svg
+                id="map_legend"
+                height="100"
+                width="400"
+                style="
+                background: rgba(255, 255, 255, 0.997);
+                margin-top: 1%;
+                margin-left: 20%;
+                "
+            ></svg>
+            <script type="text/javascript" src="map_us.js"></script>
+        </div>
 
-    <div>
-      <h3>State unemployment rates filtered by gender</h3>
-      <svg id="lineplot" width="900" height="300"></svg>
-      <div id="line-button-bar">Gender Filter:</div>
-      <script type="text/javascript" src="linechart.js"></script>
-    </div>
-  </body>
+        <div>
+            <h3>State unemployment rates filtered by gender</h3>
+            <svg id="lineplot" width="900" height="300"></svg>
+            <div id="line-button-bar">Gender Filter:</div>
+            <script type="text/javascript" src="linechart.js"></script>
+        </div>
+    </body>
 </html>

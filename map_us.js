@@ -13,8 +13,6 @@ const drawMap = async function () {
   // Import data
   const us = await d3.json('States of US.json');
   const unemplymentRate = await d3.csv("State unemployment rate 12-month change.csv", d3.autoType);
-  console.log(us)
-  console.log(unemplymentRate)
 
   //Generate the data structures we will need
   let stateNames = {};  // name of state
@@ -29,14 +27,10 @@ const drawMap = async function () {
     unemployment_rate_2022[row.state_code] = Number(row.October_2022_unemployment_rate)
     change_rate[row.state_code] = Number(row.change_12_month)
   })
-  console.log(stateNames);
-  console.log(unemployment_rate_2021);
-  console.log(unemployment_rate_2022);
-  console.log(change_rate);
+
 
   var states = topojson.feature(us, us.objects.states); // List of state outlines to fill
   var statesMesh = topojson.mesh(us, us.objects.states); // Mesh of all outlines
-  console.log(statesMesh)
   var projection = d3.geoAlbersUsa().fitSize([mapWidth, mapHeight], states);
   var path = d3.geoPath().projection(projection);
   // Add a graticule

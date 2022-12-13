@@ -54,8 +54,6 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
             "Other":sectorChange[12],
             "Government":sectorChange[13],
         })}
-
-// console.log(sectorChangeData);
     
 function updateAnimated(sectorKey){
     let sectorExtent = d3.extent(sectorChangeData, d=>d[sectorKey]['value']);
@@ -65,22 +63,10 @@ function updateAnimated(sectorKey){
     let leftAxis = d3.axisLeft(sectorScale)
     let leftGridlines = d3.axisLeft(sectorScale)
                             .tickSize(-chartWidth-10)
-                            .tickFormat("")
-
-
-    // annotations.append("g")
-    //     .attr("class", "y axis")
-    //     .attr("transform",`translate(${sectorMargin.left-10},${sectorMargin.top})`)
-    //     .call(leftAxis)     
-    // annotations.append("g")
-    //     .attr("class", "y gridlines")
-    //     .attr("transform",`translate(${sectorMargin.left-10},${sectorMargin.top})`)
-    //     .call(leftGridlines);     
-
+                            .tickFormat("")   
 
     const dateExtent = d3.extent(sectorChangeData, d => d.date);
     const dateScale = d3.scaleTime().domain(dateExtent).range([0, chartWidth]);
-    // console.log(dateExtent);
     let bottomAxis = d3.axisBottom(dateScale)
     let bottomGridlines = d3.axisBottom(dateScale)
                             .tickSize(-chartHeight-10)
@@ -191,7 +177,6 @@ activeRegion.on("mousemove", function(evt) {
 
 // get key text for buttons
 const allKeys = Object.keys(sectorChangeData[0]).filter(d=>d!="date");
-console.log(allKeys);
 allKeys.forEach(d=>{
     d3.select("div#button-bar")
     .append("button")

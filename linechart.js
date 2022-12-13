@@ -15,7 +15,6 @@ const lineChartArea = lineSvg
 
 const loadLinePlotData = async function () {
   const linePlotData = await d3.csv("unemployedRate.csv", d3.autoType);
-  //   console.log(linePlotData);
 
   const sliceLine = linePlotData.slice(51, 71);
 
@@ -23,7 +22,6 @@ const loadLinePlotData = async function () {
   sliceLine.forEach((d) => {
     d["year"] = timeParser(d["year"]);
   });
-  console.log(sliceLine);
 
   let newData = [];
   newData["Overall"] = sliceLine.map((item) => ({
@@ -40,12 +38,9 @@ const loadLinePlotData = async function () {
   }));
   newData["Clear"] = newData.Overall;
 
-  console.log(newData);
-
   //x axis
   //!!!!2021 didn't show
   const lineYearExtent = d3.extent(sliceLine, (sliceLine) => sliceLine.year);
-  console.log(lineYearExtent);
 
   const lineYearScale = d3
     .scaleTime()
@@ -67,7 +62,7 @@ const loadLinePlotData = async function () {
     sliceLine,
     (sliceLine) => sliceLine.Overall
   );
-  console.log(allPercentageExtent);
+
   const percentageScale = d3
     .scaleLinear()
     .domain([3, 12])
@@ -84,7 +79,6 @@ const loadLinePlotData = async function () {
 
   //get key text
   const buttonText = Object.keys(newData);
-  console.log(buttonText);
   const index = buttonText.indexOf("Overall");
   buttonText.splice(index, 1);
 
@@ -95,7 +89,6 @@ const loadLinePlotData = async function () {
       .style("margin", "10px")
       .text(d)
       .on("click", function () {
-        console.log(d);
         updateLine(d);
       });
   });
@@ -120,7 +113,6 @@ const loadLinePlotData = async function () {
 
   //Active Ovrerall
   const active = newData.Overall;
-  console.log(active);
   let lineGen = d3
     .line()
     .x((active) => lineYearScale(active["year"]))
@@ -154,9 +146,7 @@ const loadLinePlotData = async function () {
     .range(["lightblue", "pink", "lightgrey"]);
 
   function updateLine(key) {
-    console.log(key);
     const lineData = newData[key];
-    console.log(lineData);
     //call the marker function
     marker(lineData);
 
