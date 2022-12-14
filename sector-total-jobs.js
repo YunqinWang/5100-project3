@@ -55,8 +55,22 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
             "Government":sectorChange[13],
         })}
     
+    const dateExtent = d3.extent(sectorChangeData, d => d.date);
+    const dateScale = d3.scaleTime().domain(dateExtent).range([0, chartWidth]);
+    let bottomAxis = d3.axisBottom(dateScale)
+    let bottomGridlines = d3.axisBottom(dateScale)
+                            .tickSize(-chartHeight-10)
+                            .tickFormat("")
+    annotations.append("g") 
+        .attr("class", "x axis")
+        .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top+chartHeight})`)
+        .call(bottomAxis)
+    annotations.append("g")
+        .attr("class", "sector-grid")
+        .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top+chartHeight})`)    
+        .call(bottomGridlines);
+
 function updateAnimated(sectorKey){
-   
     let sectorExtent = d3.extent(sectorChangeData, d=>d[sectorKey]['value']);
     let sectorScale = d3.scaleLinear().domain(sectorExtent).range([chartHeight, 0]);
 
@@ -66,20 +80,7 @@ function updateAnimated(sectorKey){
                             .tickSize(-chartWidth-10)
                             .tickFormat("")   
 
-    const dateExtent = d3.extent(sectorChangeData, d => d.date);
-    const dateScale = d3.scaleTime().domain(dateExtent).range([0, chartWidth]);
-    let bottomAxis = d3.axisBottom(dateScale)
-    let bottomGridlines = d3.axisBottom(dateScale)
-                            .tickSize(-chartHeight-10)
-                            .tickFormat("")
-    annotations.append("g")
-        .attr("class", "x axis")
-        .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top+chartHeight})`)
-        .call(bottomAxis)
-    annotations.append("g")
-        .attr("class", "sector-grid")
-        .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top+chartHeight})`)
-        .call(bottomGridlines);
+    
 
     let lineGen = d3.line().x(d=>dateScale(d.date)).y(d=>sectorScale(d[sectorKey]['value']));
 
