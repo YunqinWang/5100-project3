@@ -31,6 +31,7 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
         }
     }
 
+    //botto year axis
     const dateExtent = d3.extent(sectorData, d => d["Month"]);
     const dateScale = d3.scaleTime().domain(dateExtent).range([0, chartWidth]);
     let bottomAxis = d3.axisBottom(dateScale)
@@ -46,17 +47,26 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
         .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top+chartHeight})`)    
         .call(bottomGridlines);
 
-    function updateAnimated(sectorKey){
-        let sectorExtent = d3.extent(sectorData, d=>d[sectorKey] );
-        let sectorScale = d3.scaleLinear().domain(sectorExtent).range([chartHeight, 0]);
+    //  left job number Axis
+    let sectorExtent = [500,25000]
+    let sectorScale = d3.scaleLinear().domain(sectorExtent).range([chartHeight, 0]);
+    
+    let leftAxis = d3.axisLeft(sectorScale)
+    annotations.append("g") 
+                .attr("class", "y axis")
+                .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top})`)
+                .call(leftAxis)
+    
+    // sector name and color
+    const allSectorName = Object.keys(sectorData[0]).filter(d=>d!="Month" && !d.includes("Total"));
 
-        //  leftAxis
-        let leftAxis = d3.axisLeft(sectorScale)
-        annotations.append("g") 
-                    .attr("class", "y axis")
-                    .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top})`)
-                    .call(leftAxis)
-        
+    const sectorColors = ["#9eadf3","#49c2ff","#e3da3d","#ffaf4d","#ff6f56","#f3bad2",
+    "#d5e2a3","#d5caee","#eb7cc7","#b7d0ff","#9fe0ff","#b6e9e1","#c2eeb3",
+    "#c2e33e","#f1dda9","#f2c89d","#ffafa2","#f3bad2","#e9b6f8"]
+    const sectorNameScale = d3.scaleOrdinal().domain(allSectorName).range(sectorColors);
+
+   
+    function updateAnimated(sectorKey){
         let lineGen = d3.line().x(d=>dateScale(d["Month"])).y(d=>sectorScale(d[sectorKey]));
 
         chartArea.selectAll("path").remove();
@@ -64,33 +74,32 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
         
         chartArea.append("path")
                 .attr("d", lineGen(sectorData))
-                .attr("stroke", "#C0EEE4")
+                .attr("stroke", sectorNameScale(sectorKey))
                 .attr("stroke-width", 2)
                 .attr("fill", "none");
 
-        chartArea.selectAll("circle").data(sectorData)
-                .join("circle")
-                .attr("r",1)
-                .attr("fill","#2B3A55")
-                .attr("cx",d=>dateScale(d["Month"]))
-                .attr("cy",d=>sectorScale(d[sectorKey]))
+        // chartArea.selectAll("circle").data(sectorData)
+        //         .join("circle")
+        //         .attr("r",1)
+        //         .attr("fill","#2B3A55")
+        //         .attr("cx",d=>dateScale(d["Month"]))
+        //         .attr("cy",d=>sectorScale(d[sectorKey]))
 
-        let mouseGroup = chartArea.append('g')
+        const mouseGroup = chartArea.append('g')
         let xMarker = mouseGroup.append("line")
                                 .attr("id","xMarker")
                                 .attr("fill","none")
-                                .attr("stroke","purple")
-                                .attr("stroke-width",1)
+                                .attr("stroke","#bbb")
+                                .attr("stroke-width",0.7)
                                 .attr("y1",0)
                                 .attr("y2",chartHeight)
                                 .attr("visibility","hidden");
 
         let valueMarker = mouseGroup.append("circle")
                                     .attr("id","valueMarker")
-                                    .attr("fill","none")
-                                    .attr("stroke","black")
-                                    .attr("stroke-width",2)
-                                    .attr("r",8)
+                                    .attr("fill",sectorNameScale(sectorKey))
+                                    .style("filter","brightness(0.6)")
+                                    .attr("r",5)
                                     .attr("visibility","hidden");
 
         let label = mouseGroup.append("text")
@@ -143,14 +152,23 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
                     .attr("x",xPos+10)
                     .attr("y",yPos-10);
             }
-
         });   
     }
 
 
-    // get key text for buttons
-    const allKeys = Object.keys(sectorData[0]).filter(d=>d!="Month" && !d.includes("Total"));
-    allKeys.forEach(d=>{
+    // add "show all" button
+    d3.select("div#button-bar")
+        .append("button")
+        .text("Show All")
+        .attr("class","sector-name-button")
+        .on('click', function(){
+            d3.selectAll(".sector-name-button").style("background","none").style("color","#000");
+            d3.select(this).style("background","#000").style("color","#fff");
+            showAll();
+    })
+
+    // add buttons for each sector
+    allSectorName.forEach(d=>{
         d3.select("div#button-bar")
         .append("button")
         .text(d)
@@ -160,16 +178,39 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
 
     function setBtnColor(){
         let text = d3.select(this).text();
-        d3.selectAll(".sector-name-button").style("background","none").style("color","#000");
-        d3.select(this).style("background","#000").style("color","#fff");
+        d3.selectAll(".sector-name-button")
+            .style("background","none")
+            .style("color","#000");
+        d3.select(this)
+            .style("background",sectorNameScale(text))
         updateAnimated(text);
     }
 
-    //set default view to be the first sector
+    //set default view to be "show all"
     let firstBtn = d3.selectAll(".sector-name-button")
                         .filter((d, i)=> i == 0)
     firstBtn.style("background","#000").style("color","#fff");
-    updateAnimated(allKeys[0]);
+    showAll();
+
+    function showAll(){
+        allSectorName.forEach(sector=>{
+            const sectorKey = sector;
+            let lineGen = d3.line().x(d=>dateScale(d["Month"])).y(d=>sectorScale(d[sectorKey]));
+            chartArea.append("path")
+                    .attr("d", lineGen(sectorData))
+                    .attr("stroke", d=>sectorNameScale(sectorKey))
+                    .attr("stroke-width", 2)
+                    .attr("fill", "none");
+    
+            chartArea.selectAll("circle").data(sectorData)
+                    .join("circle")
+                    .attr("r",1)
+                    .attr("fill","#2B3A55")
+                    .attr("cx",d=>dateScale(d["Month"]))
+                    .attr("cy",d=>sectorScale(d[sectorKey]))
+        })
+    }
 }
+
 getData();
 
