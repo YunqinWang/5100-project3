@@ -42,11 +42,15 @@
             color:#fff;
         }
 
-        .container{
+        .container:not(:first-child){
             margin-top:3em;
         }
-        /* -------------------------Map----------------------------- */
 
+        svg{
+            margin:auto;
+            display:block;
+        }
+        /* -------------------------Map----------------------------- */
         .outline {
             stroke: black;
             stroke-width: 2px;
@@ -142,17 +146,15 @@
        }
         .job-label{
            font-size: 15px;
-        
         }
-       #label-sector,
-       #label-value,
-       #label-date{
-            font-size: 15px;
-       }
+        #label-sector,
+        #label-value,
+        #label-date{
+                font-size: 15px;
+        }
 
        #sectorLineChart{
-           margin:auto;
-           display:block;
+           
        }
        /* -------------------------End of Job Number----------------------------- */
 
@@ -161,19 +163,17 @@
     <body>
         <h1>Project3</h1>
         <h6>
-        Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462),
-        Jiaxin Li(jl3579), Peter Huang (mh2289)
+            Team member: Yunqin Wang(yw652), Ying Zhang(yz2249), Yu Yang(yy462),
+            Jiaxin Li(jl3579), Peter Huang (mh2289)
         </h6>
 
-        
-        
-        <div class="grid-container container">
+        <div class="container">
             <h3>Job Gains and Losses of each Sector</h3>
             <p>
-            Track the rises and falls of jobs provided in each sector in the past
-            two decades. It might give indications about the development of the job
-            market in the states.<br />
-            The boxes are colored by the change in number of jobs.
+                Track the rises and falls of jobs provided in each sector in the past
+                two decades. It might give indications about the development of the job
+                market in the states.<br />
+                The boxes are colored by the change in number of jobs.
             </p>
             <svg id="sectorGrid" width="1550" height="420"></svg>
         </div>
@@ -190,7 +190,7 @@
             <script src="./sector-job-change.js"></script>
         </div>
 
-        <div class="job-trend container">
+        <div class="container">
             <h3>Overall Trend: Total Jobs for Each Sector (Please click button to show graph) </h3>
             <div>
                 <div id="button-bar"></div>
@@ -199,17 +199,15 @@
             <script src="./sector-total-jobs.js"></script>
         </div>
 
-        <div id="map-container container">
-            <h3>
-                State unemployment rates in the US, October 2022, seasonally adjusted
-            </h3>
+        <div class="container">
+            <h3>State unemployment rates in the US, October 2022, seasonally adjusted</h3>
             <svg id="map" width="1400" height="700" style="background: gray"></svg>
             <svg
                 id="map_legend"
                 height="100"
                 width="400"
                 style="
-                background: rgba(255, 255, 255, 0.997);
+
                 margin-top: 1%;
                 margin-left: 20%;
                 "
