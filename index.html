@@ -154,6 +154,9 @@
        /* -------------------------End of Racing Sectors----------------------------- */
 
        /* -------------------------Job Number----------------------------- */
+       .sectorLineChart{
+        display: flex;
+       }
        #label-sector{
           font-weight: bold;
        }
@@ -164,6 +167,9 @@
         #label-value,
         #label-date{
                 font-size: 15px;
+        }
+        .sectorLine-legend{
+            font-size: 15px;
         }
        /* -------------------------End of Job Number----------------------------- */
 
@@ -214,10 +220,13 @@
         </div>
 
         <div class="container">
-            <h3>Overall Trend: Total Jobs for Each Sector (Please click button to show graph) </h3>
+            <h3>Overall Trend: Total Jobs for Each Sector</h3>
             <div>
                 <div id="button-bar"></div>
-                <svg id="sectorLineChart" width="1100" height="500"></svg>
+                <div class="sectorLineChart">
+                    <svg id="sectorLineChart" width="1100" height="500"></svg>
+                    <svg id="sectorLineChartLegend" width="300" height="500"></svg>
+                </div>
             </div>
             <script src="./sector-total-jobs.js"></script>
         </div>

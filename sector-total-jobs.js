@@ -1,15 +1,18 @@
 const sectorLineChart = d3.select("#sectorLineChart");
-    const sectorWidth = sectorLineChart.attr("width");
-    const sectorHight = sectorLineChart.attr("height");
-    const sectorMargin = {top: 60, right: 10, bottom: 50, left: 50};
-    const chartWidth = sectorWidth - sectorMargin.left - sectorMargin.right;
-    const chartHeight = sectorHight - sectorMargin.top - sectorMargin.bottom;
+const sectorWidth = sectorLineChart.attr("width");
+const sectorHight = sectorLineChart.attr("height");
+const sectorMargin = {top: 60, right: 10, bottom: 50, left: 50};
+const chartWidth = sectorWidth - sectorMargin.left - sectorMargin.right;
+const chartHeight = sectorHight - sectorMargin.top - sectorMargin.bottom;
 
-    let annotations = sectorLineChart.append("g").attr("id","annotations");
-    let chartArea = sectorLineChart.append("g").attr("id","points")
-                    .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top})`);
+const annotations = sectorLineChart.append("g").attr("id","annotations");
+const chartArea = sectorLineChart.append("g").attr("id","points")
+                .attr("transform",`translate(${sectorMargin.left},${sectorMargin.top})`);
 
-
+//legend
+const sectorLineChartLegend = d3.select("#sectorLineChartLegend");
+const legendArea = sectorLineChartLegend.append("g").attr("id","legend")
+                   
 const getData = async () => {
 const sectorData = await d3.csv("./sector_employment_data.csv");
     
@@ -75,12 +78,34 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
     "#d5e2a3","#d5caee","#eb7cc7","#b7d0ff","#9fe0ff","#b6e9e1","#c2eeb3",
     "#c2e33e","#f1dda9","#f2c89d","#ffafa2","#f3bad2","#e9b6f8"]
     const sectorNameScale = d3.scaleOrdinal().domain(allSectorName).range(sectorColors);
+    
+    const verticalStart = 40
+    const verticalGap = 25
+    allSectorName.forEach((d,i)=>{
+        legendArea.append("line")
+                .attr("x1",0)
+                .attr("x2",20)
+                .attr("y1", verticalStart+i*verticalGap)
+                .attr("y2", verticalStart+i*verticalGap)
+                .attr("stroke-width",5)
+                .attr("stroke",sectorNameScale (d))
+        
+        legendArea.append("text")
+                .attr("class","sectorLine-legend")
+                .attr("x",25)
+                .attr("y", verticalStart+i*verticalGap)
+                .text(d)
+                .attr("alignment-baseline","central")
+                
+
+    })
+    
 
     const mouseGroup = chartArea.append('g')
     const labelG = mouseGroup.append("g").attr("id","labelG")
 
     function showAll(){
-        mouseGroup.select("#activeRegion").remove()
+        mouseGroup.selectAll("#activeRegion").remove()
         allSectorName.forEach(sector=>{
             const sectorKey = sector;
             let lineGen = d3.line().x(d=>dateScale(d["Month"])).y(d=>sectorScale(d[sectorKey]));
