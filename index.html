@@ -40,13 +40,12 @@
         button:hover{
             background:#000;
             color:#fff;
-            color:#d8f5f8
         }
 
         .container:not(:first-child){
-            margin:2em 0;
+            margin:4em 0;
         }
-        svg{
+        .center{
             margin:auto;
             display:block;
         }
@@ -132,6 +131,7 @@
        }
         
        .compete{
+            justify-content: center;
            display:flex;
            align-items:flex-end;
        }
@@ -209,7 +209,7 @@
         <div class="container">                
             <p >Sector Ranking based on the monthly change of job provided</p>
             <div class="compete">
-                <svg id="sectorCompete" width="1000" height="500"></svg>
+                <svg  id="sectorCompete" width="1000" height="500"></svg>
                 <div class="sector-compete-panel">
                     <p>Switch to:</p>
                     <div id="sector-compete-btn">
@@ -224,8 +224,8 @@
             <div>
                 <div id="button-bar"></div>
                 <div class="sectorLineChart">
-                    <svg id="sectorLineChart" width="1100" height="500"></svg>
-                    <svg id="sectorLineChartLegend" width="300" height="500"></svg>
+                    <svg  class="center" id="sectorLineChart" width="1100" height="500"></svg>
+                    <svg  class="center" id="sectorLineChartLegend" width="300" height="500"></svg>
                 </div>
             </div>
             <script src="./sector-total-jobs.js"></script>
@@ -233,8 +233,9 @@
 
         <div class="container">
             <h3>State unemployment rates in the US, October 2022, seasonally adjusted</h3>
-            <svg id="map" width="1200" height="500" style="background: rgb(247, 247, 247)"></svg>
-            <svg
+            <svg  class="center"  id="map" width="1200" height="500" 
+                style="background: rgb(247, 247, 247)"></svg>
+            <svg class="center" 
                 id="map_legend"
                 height="100"
                 width="600"
@@ -244,7 +245,7 @@
 
         <div class="container">
             <h3>State unemployment rates filtered by gender</h3>
-            <svg id="lineplot" width="900" height="300"></svg>
+            <svg class="center" id="lineplot" width="900" height="300"></svg>
             <div id="line-button-bar">Gender Filter:</div>
             <script type="text/javascript" src="linechart.js"></script>
         </div>
