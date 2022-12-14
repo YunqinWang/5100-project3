@@ -73,6 +73,13 @@
         .label{
             font-size: 15px;
         }
+        #button-bar{
+            display:grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        }
+        #button-bar button{
+            white-space:nowrap
+        }
         /* -------------------------End of Map----------------------------- */
         
         /* -------------------------Sectors Grid----------------------------- */
@@ -197,7 +204,7 @@
             <h3>Overall Trend: Total Jobs for Each Sector (Please click button to show graph) </h3>
             <div>
                 <div id="button-bar"></div>
-                <svg id="sectorLineChart" width="1100" height="550"></svg>
+                <svg id="sectorLineChart" width="1100" height="500"></svg>
             </div>
             <script src="./sector-total-jobs.js"></script>
         </div>

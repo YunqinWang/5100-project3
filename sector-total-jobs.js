@@ -80,6 +80,7 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
     const labelG = mouseGroup.append("g").attr("id","labelG")
 
     function showAll(){
+        mouseGroup.select("#activeRegion").remove()
         allSectorName.forEach(sector=>{
             const sectorKey = sector;
             let lineGen = d3.line().x(d=>dateScale(d["Month"])).y(d=>sectorScale(d[sectorKey]));
