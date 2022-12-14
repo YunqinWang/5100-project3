@@ -42,10 +42,10 @@
             color:#fff;
         }
 
-        /* -------------------------Map----------------------------- */
-        .state {
-            
+        .container{
+            margin-top:3em;
         }
+        /* -------------------------Map----------------------------- */
 
         .outline {
             stroke: black;
@@ -136,6 +136,26 @@
        }
        /* -------------------------End of Racing Sectors----------------------------- */
 
+       /* -------------------------Job Number----------------------------- */
+       #label-sector{
+          font-weight: bold;
+       }
+        .job-label{
+           font-size: 15px;
+        
+        }
+       #label-sector,
+       #label-value,
+       #label-date{
+            font-size: 15px;
+       }
+
+       #sectorLineChart{
+           margin:auto;
+           display:block;
+       }
+       /* -------------------------End of Job Number----------------------------- */
+
     </style>
 
     <body>
@@ -145,9 +165,10 @@
         Jiaxin Li(jl3579), Peter Huang (mh2289)
         </h6>
 
-        <div>
-        <h3>Job Gains and Losses of each Sector</h3>
-        <div class="grid-container">
+        
+        
+        <div class="grid-container container">
+            <h3>Job Gains and Losses of each Sector</h3>
             <p>
             Track the rises and falls of jobs provided in each sector in the past
             two decades. It might give indications about the development of the job
@@ -156,7 +177,7 @@
             </p>
             <svg id="sectorGrid" width="1550" height="420"></svg>
         </div>
-        <div class="compete-container">                
+        <div class="compete-container container">                
             <p >Sector Ranking based on the monthly change of job provided</p>
             <div class="compete">
                 <svg id="sectorCompete" width="1000" height="500"></svg>
@@ -169,14 +190,16 @@
             <script src="./sector-job-change.js"></script>
         </div>
 
-        <div class="job-trend">
+        <div class="job-trend container">
             <h3>Overall Trend: Total Jobs for Each Sector (Please click button to show graph) </h3>
-            <div id="button-bar"></div>
-            <svg id="sectorLineChart" width="1100" height="550"></svg>
+            <div>
+                <div id="button-bar"></div>
+                <svg id="sectorLineChart" width="1100" height="550"></svg>
+            </div>
             <script src="./sector-total-jobs.js"></script>
         </div>
 
-        <div id="map-container">
+        <div id="map-container container">
             <h3>
                 State unemployment rates in the US, October 2022, seasonally adjusted
             </h3>
@@ -194,7 +217,7 @@
             <script type="text/javascript" src="map_us.js"></script>
         </div>
 
-        <div>
+        <div class="container">
             <h3>State unemployment rates filtered by gender</h3>
             <svg id="lineplot" width="900" height="300"></svg>
             <div id="line-button-bar">Gender Filter:</div>

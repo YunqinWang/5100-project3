@@ -1,7 +1,7 @@
 const sectorLineChart = d3.select("#sectorLineChart");
     const sectorWidth = sectorLineChart.attr("width");
     const sectorHight = sectorLineChart.attr("height");
-    const sectorMargin = {top: 10, right: 10, bottom: 50, left: 50};
+    const sectorMargin = {top: 60, right: 10, bottom: 50, left: 50};
     const chartWidth = sectorWidth - sectorMargin.left - sectorMargin.right;
     const chartHeight = sectorHight - sectorMargin.top - sectorMargin.bottom;
 
@@ -31,7 +31,18 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
         }
     }
 
-    //botto year axis
+    annotations.append("text")
+                .text("Year")
+                .attr("class", "job-label")
+                .attr("text-anchor", "end")
+                .attr("transform",`translate(${chartWidth + sectorMargin.left},
+                    ${sectorMargin.top+chartHeight+sectorMargin.bottom})`)  
+    annotations.append("text")
+                .text("Job Number")
+                .attr("class", "job-label")
+                .attr("transform",`translate(${0},${sectorMargin.top-20})`)    
+
+    //bottom year axis
     const dateExtent = d3.extent(sectorData, d => d["Month"]);
     const dateScale = d3.scaleTime().domain(dateExtent).range([0, chartWidth]);
     let bottomAxis = d3.axisBottom(dateScale)
@@ -65,132 +76,8 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
     "#c2e33e","#f1dda9","#f2c89d","#ffafa2","#f3bad2","#e9b6f8"]
     const sectorNameScale = d3.scaleOrdinal().domain(allSectorName).range(sectorColors);
 
-   
-    function updateAnimated(sectorKey){
-        let lineGen = d3.line().x(d=>dateScale(d["Month"])).y(d=>sectorScale(d[sectorKey]));
-
-        chartArea.selectAll("path").remove();
-        chartArea.selectAll('circle').remove();
-        
-        chartArea.append("path")
-                .attr("d", lineGen(sectorData))
-                .attr("stroke", sectorNameScale(sectorKey))
-                .attr("stroke-width", 2)
-                .attr("fill", "none");
-
-        // chartArea.selectAll("circle").data(sectorData)
-        //         .join("circle")
-        //         .attr("r",1)
-        //         .attr("fill","#2B3A55")
-        //         .attr("cx",d=>dateScale(d["Month"]))
-        //         .attr("cy",d=>sectorScale(d[sectorKey]))
-
-        const mouseGroup = chartArea.append('g')
-        let xMarker = mouseGroup.append("line")
-                                .attr("id","xMarker")
-                                .attr("fill","none")
-                                .attr("stroke","#bbb")
-                                .attr("stroke-width",0.7)
-                                .attr("y1",0)
-                                .attr("y2",chartHeight)
-                                .attr("visibility","hidden");
-
-        let valueMarker = mouseGroup.append("circle")
-                                    .attr("id","valueMarker")
-                                    .attr("fill",sectorNameScale(sectorKey))
-                                    .style("filter","brightness(0.6)")
-                                    .attr("r",5)
-                                    .attr("visibility","hidden");
-
-        let label = mouseGroup.append("text")
-                                .attr("id","label")
-                                .attr("visibility","hidden");
-
-        let activeRegion = mouseGroup.append("rect")
-                                    .attr("id","activeRegion")
-                                    .attr("width",chartWidth)
-                                    .attr("height",chartHeight)
-                                    .attr("fill","none")
-                                    .attr("pointer-events","all");
-
-        activeRegion.on("mouseover", function() {
-            xMarker.attr("visibility","");
-            valueMarker.attr("visibility","");
-            label.attr("visibility",""); 
-        });
-
-    // When the mouse leaves, hide the annotations
-        activeRegion.on("mouseout", function() {
-            xMarker.attr("visibility","hidden");
-            valueMarker.attr("visibility","hidden");
-            label.attr("visibility","hidden"); 
-        });
-
-        let findDate = d3.bisector(d=>d["Month"]).right;
-        activeRegion.on("mousemove", function(evt) {
-            let location = d3.pointer(evt);
-            let x = location[0];
-            let xDate = dateScale.invert(x);
-            let index = findDate(sectorData, xDate);
-            let d = sectorData[index];
-
-            let xPos = dateScale(d["Month"]);
-            let yPos = sectorScale(d[sectorKey]);
-
-            xMarker.attr("x1",xPos).attr("x2",xPos);
-            valueMarker.attr("cx",xPos).attr("cy",yPos);
-
-            let txt = `${sectorKey + ": " + d[sectorKey]+ ";  " + (d["Month"].getMonth() + 1) + "/" + d["Month"].getFullYear()}`;
-            label.text(txt)
-
-            if (xPos > chartWidth/2) {
-                label.attr("text-anchor","end")
-                    .attr("x",xPos-10)
-                    .attr("y",yPos-10);
-            }else{
-                label.attr("text-anchor","start")
-                    .attr("x",xPos+10)
-                    .attr("y",yPos-10);
-            }
-        });   
-    }
-
-
-    // add "show all" button
-    d3.select("div#button-bar")
-        .append("button")
-        .text("Show All")
-        .attr("class","sector-name-button")
-        .on('click', function(){
-            d3.selectAll(".sector-name-button").style("background","none").style("color","#000");
-            d3.select(this).style("background","#000").style("color","#fff");
-            showAll();
-    })
-
-    // add buttons for each sector
-    allSectorName.forEach(d=>{
-        d3.select("div#button-bar")
-        .append("button")
-        .text(d)
-        .attr("class","sector-name-button")
-        .on('click', setBtnColor)
-    });
-
-    function setBtnColor(){
-        let text = d3.select(this).text();
-        d3.selectAll(".sector-name-button")
-            .style("background","none")
-            .style("color","#000");
-        d3.select(this)
-            .style("background",sectorNameScale(text))
-        updateAnimated(text);
-    }
-
-    //set default view to be "show all"
-    let firstBtn = d3.selectAll(".sector-name-button")
-                        .filter((d, i)=> i == 0)
-    firstBtn.style("background","#000").style("color","#fff");
-    showAll();
+    const mouseGroup = chartArea.append('g')
+    const labelG = mouseGroup.append("g").attr("id","labelG")
 
     function showAll(){
         allSectorName.forEach(sector=>{
@@ -201,15 +88,169 @@ const sectorData = await d3.csv("./sector_employment_data.csv");
                     .attr("stroke", d=>sectorNameScale(sectorKey))
                     .attr("stroke-width", 2)
                     .attr("fill", "none");
-    
-            chartArea.selectAll("circle").data(sectorData)
-                    .join("circle")
-                    .attr("r",1)
-                    .attr("fill","#2B3A55")
-                    .attr("cx",d=>dateScale(d["Month"]))
-                    .attr("cy",d=>sectorScale(d[sectorKey]))
         })
     }
+
+    function showSelectedSector(sectorKey){
+        let lineGen = d3.line().x(d=>dateScale(d["Month"])).y(d=>sectorScale(d[sectorKey]));
+        chartArea.selectAll("path").remove();
+        chartArea.selectAll('circle').remove();
+        
+        //polyline
+        chartArea.append("path")
+                .attr("d", lineGen(sectorData))
+                .attr("stroke", sectorNameScale(sectorKey))
+                .attr("stroke-width", 2)
+                .attr("fill", "none");
+
+        updateAnimated(sectorKey)
+    }
+
+    function updateAnimated(sectorKey){
+        //hover vertical line
+        mouseGroup.append("line")
+                .attr("id","xMarker")
+                .attr("fill","none")
+                .attr("stroke","#bbb")
+                .attr("stroke-width",0.7)
+                .attr("y1",0)
+                .attr("y2",chartHeight)
+                .attr("opacity","0");
+
+        //hover circle marker
+        mouseGroup.append("circle")          
+                    .attr("id","valueMarker")
+                    .attr("fill",sectorNameScale(sectorKey))
+                    .style("filter","brightness(0.6)")
+                    .attr("r",5)
+                    .attr("opacity","0");
+
+        labelG.append("text")
+                .attr("id","label-sector")
+                .attr("x",0)
+                .attr("y",0)               
+                .attr("opacity","0");
+        labelG.append("text")
+                .attr("id","label-value")
+                .attr("x",0)
+                .attr("y",20)               
+                .attr("opacity","0");
+        labelG.append("text")
+                .attr("id","label-date")
+                .attr("x",0)
+                .attr("y",40)               
+                .attr("opacity","0");
+                
+        let activeRegion = mouseGroup.append("rect")
+                                    .attr("id","activeRegion")
+                                    .attr("width",chartWidth)
+                                    .attr("height",chartHeight)
+                                    .attr("fill","none")
+                                    .attr("pointer-events","all");
+        
+        activeRegion.datum(sectorKey)
+                    .on("mousemove", hoverData)  
+                    .on("mouseout", leaveData);   
+    }
+
+    function hoverData(evt,sectorKey){
+        let findDate = d3.bisector(d=>d["Month"]).right;
+        let location = d3.pointer(evt);
+        let x = location[0];
+        let xDate = dateScale.invert(x);
+        let index = findDate(sectorData, xDate);
+        let d = sectorData[index];
+
+        let xPos = dateScale(d["Month"]);
+        let yPos = sectorScale(d[sectorKey]);
+
+        mouseGroup.select("#xMarker").attr("x1",xPos).attr("x2",xPos).attr("opacity","1");
+        mouseGroup.select("#valueMarker").attr("cx",xPos).attr("cy",yPos).attr("opacity","1");
+
+        //set label position
+        let offsetX = xPos > chartWidth/2 ? -20:20;
+        let textAnchor = xPos > chartWidth/2 ? "end":"start";
+        let offsetY = yPos < 80 ? 80:-60;
+        mouseGroup.select("#labelG")
+                  .attr("transform", `translate(${xPos+offsetX},${yPos+offsetY})`);
+
+        //set label text
+        labelG.select("#label-sector")
+                  .attr("opacity","1")
+                  .text(sectorKey )
+                  .attr("text-anchor",textAnchor)
+        labelG.select("#label-value")
+                  .attr("opacity","1")
+                  .text("Job Numbers: "+ d[sectorKey])
+                  .attr("text-anchor",textAnchor)
+        labelG.select("#label-date")
+                  .attr("opacity","1")
+                  .text("date: "+ (d["Month"].getMonth() + 1) + "/" + d["Month"].getFullYear())
+                  .attr("text-anchor",textAnchor)
+    }
+
+    function leaveData(){
+        mouseGroup.select("#xMarker").attr("opacity","0");
+        mouseGroup.select("#valueMarker").attr("opacity","0");
+        mouseGroup.select("#label-sector").attr("opacity","0");
+        mouseGroup.select("#label-value").attr("opacity","0");
+        mouseGroup.select("#label-date").attr("opacity","0");
+    }
+
+    // add "show all" button
+    d3.select("div#button-bar")
+        .append("button")
+        .text("Show All")
+        .attr("class","sector-name-button")
+        .on('click', function(){
+            d3.selectAll(".sector-name-button").style("background","none").style("color","#000");
+            d3.select(this).style("background","#000").style("color","#fff");
+            showAll();
+        })
+        .on("mouseover", function () {
+            d3.select(this).style("background", "#000")
+                            .style("color", "#fff");
+        })
+
+    // add buttons for each sector
+    let sectorBtn =[];
+    allSectorName.forEach(d=>{
+        let sector = d3.select("div#button-bar")
+                        .append("button")
+                        .text(d)
+                        .attr("class","sector-name-button")
+                        .on('click', setBtnColor)
+        sectorBtn.push(sector);
+    });
+ 
+    sectorBtn.forEach(d=>{
+        d.on("mouseover", function () {
+            let text = d3.select(this).text();
+            d3.select(this).style("background", sectorNameScale(text))
+                            .style("color", "#000");
+        })
+        d.on("mouseout", function () {
+            d3.select(this).style("background", "none")
+        })
+    });
+
+    function setBtnColor(){
+        let text = d3.select(this).text();
+        d3.selectAll(".sector-name-button")
+            .style("background","none")
+            .style("color","#000");
+        d3.select(this)
+            .style("background",sectorNameScale(text))
+            showSelectedSector(text);
+    }
+
+    //set default view to be "show all"
+    let firstBtn = d3.selectAll(".sector-name-button")
+                        .filter((d, i)=> i == 0)
+    firstBtn.style("background","#000").style("color","#fff");
+    showAll();
+
+    
 }
 
 getData();
