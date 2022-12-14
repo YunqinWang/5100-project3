@@ -209,7 +209,7 @@ const loadLinePlotData = async function () {
     .append("g")
     .attr("class", "lineLegend")
     .attr("transform", function (d, i) {
-      return `translate(${linePlotWidth - 30},${i * 20 + 10})`;
+      return `translate(${linePlotWidth - 30},${i * 20 + 15})`;
     });
 
   lineLegend
